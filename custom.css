@@ -1,0 +1,18 @@
+html {
+    height: 100%;
+}
+
+body {
+    background-image: url("/bg.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
+    background-color: rgba(255,255,255,0.6);
+    background-blend-mode: lighten;
+    background-attachment: fixed;
+
+    min-height: 100%;
+
+    font-family: 'Noto Sans', sans-serif;
+    font: 'Arial', '文泉驛正黑', 'WenQuanYi Zen Hei', '儷黑 Pro', 'LiHei Pro', '微軟正黑體', 'Microsoft JhengHei', sans-serif;
+}
