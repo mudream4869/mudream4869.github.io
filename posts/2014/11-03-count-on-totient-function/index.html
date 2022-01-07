@@ -1,0 +1,384 @@
+<!doctype html><html lang=zh-tw>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>Count on Totient Function &#183; Imaginary City</title>
+<link rel=stylesheet href=/css/style.css>
+<link rel=stylesheet href=/css/fonts.css>
+<link rel=stylesheet href=/custom.css>
+<link rel=icon href=favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<link href rel=alternate type=application/rss+xml title="Imaginary City">
+<script>MathJax={tex:{inlineMath:[["$","$"]]},displayMath:[["$$","$$"],["[[","]]"]],svg:{fontCache:"global"}}</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script>
+</head>
+<body>
+<nav class=nav>
+<div class=nav-container>
+<a href=/>
+<h2 class=nav-title>Imaginary City</h2>
+</a>
+<ul>
+<li>
+<a href=/about/>
+<span>About</span>
+</a>
+</li>
+<li>
+<a href=/notes/>
+<span>Notes</span>
+</a>
+</li>
+<li>
+<a href=/posts/>
+<span>Posts</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<main>
+<div class=post>
+<div class=post-info>
+<br>
+<time datetime="2014-11-03 08:00:00 +0000 UTC">November 3, 2014</time>
+</div>
+<h1 class=post-title>Count on Totient Function</h1>
+<div class=post-line></div>
+<p>到這麼多COT題目，也來跟風(X</p>
+<h2 id=問題>問題</h2>
+<p>給你一個n( $n &lt; 10^{10}$ )，問是否存在 $x$ 使得 $\phi(x)=n$ 。題目會有多筆詢問。</p>
+<h2 id=題解>題解</h2>
+<p>以下 $d(n)$ 表n的因數個數。</p>
+<p>首先可以把 $\phi(x)$ 展開</p>
+<p>$$
+\phi(x) = p_1^{\alpha_1-1}p_2^{\alpha_2-1}&mldr;p_r^{\alpha_r-1}(p_1-1)(p_2-1)&mldr;(p_r-1)
+$$</p>
+<p>假如有解，那麼必然存在</p>
+<p>$$
+(p_1-1)(p_2-1)&mldr;(p_r-1) | n
+$$</p>
+<p>我們可以試著去枚舉 $(p_1-1)(p_2-1)&mldr;(p_r-1)$ 。
+可以觀察到 $(p_i-1)|n$ ，所以可以先從 $n$ 的因數下手：</p>
+<ol>
+<li>因數分解</li>
+<li><strong>BFS</strong>遍歷</li>
+</ol>
+<p>所以我們可以得到一個集合：</p>
+<p>$$
+A = { d \ | \ d|n \ , d+1 \in Prime \ }
+$$</p>
+<p>可以順便注意到 $|A| \leq d(n)$ ，這可以保證時空複雜度</p>
+<p>然後再由A生成一個集合</p>
+<p>$$
+B = { a_1a_2..a_k \ | \ k \in \mathbb{N} \ , a_i \in A \ , \ a_1a_2..a_k|n \ }
+$$</p>
+<p>同樣的， $|B| \leq d(n)$ 。</p>
+<p>接下來就對 $B$ 裡面的元素做枚舉 $b \in B$ ，
+去檢查 $\frac{n}{b}$ 的因數分解。
+假如把 $\frac{n}{b}$ 分解後得到 $q_1^{\beta_1}q_2^{\beta_2}&mldr;$
+並且 $b=(q_1-1)(q_2-1)&mldr;$ ，那麼還原 $n=q_1^{\beta_1}q_2^{\beta_2}&mldr;(q_1-1)(q_2-1)&mldr;$ 就是一解</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>  1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>  2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3>  3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4>  4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5>  5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6>  6</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7>  7</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8>  8</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=9><a style=outline:none;text-decoration:none;color:inherit href=#9>  9</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=10><a style=outline:none;text-decoration:none;color:inherit href=#10> 10</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=11><a style=outline:none;text-decoration:none;color:inherit href=#11> 11</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=12><a style=outline:none;text-decoration:none;color:inherit href=#12> 12</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=13><a style=outline:none;text-decoration:none;color:inherit href=#13> 13</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=14><a style=outline:none;text-decoration:none;color:inherit href=#14> 14</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=15><a style=outline:none;text-decoration:none;color:inherit href=#15> 15</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=16><a style=outline:none;text-decoration:none;color:inherit href=#16> 16</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=17><a style=outline:none;text-decoration:none;color:inherit href=#17> 17</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=18><a style=outline:none;text-decoration:none;color:inherit href=#18> 18</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=19><a style=outline:none;text-decoration:none;color:inherit href=#19> 19</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=20><a style=outline:none;text-decoration:none;color:inherit href=#20> 20</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=21><a style=outline:none;text-decoration:none;color:inherit href=#21> 21</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=22><a style=outline:none;text-decoration:none;color:inherit href=#22> 22</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=23><a style=outline:none;text-decoration:none;color:inherit href=#23> 23</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=24><a style=outline:none;text-decoration:none;color:inherit href=#24> 24</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=25><a style=outline:none;text-decoration:none;color:inherit href=#25> 25</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=26><a style=outline:none;text-decoration:none;color:inherit href=#26> 26</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=27><a style=outline:none;text-decoration:none;color:inherit href=#27> 27</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=28><a style=outline:none;text-decoration:none;color:inherit href=#28> 28</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=29><a style=outline:none;text-decoration:none;color:inherit href=#29> 29</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=30><a style=outline:none;text-decoration:none;color:inherit href=#30> 30</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=31><a style=outline:none;text-decoration:none;color:inherit href=#31> 31</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=32><a style=outline:none;text-decoration:none;color:inherit href=#32> 32</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=33><a style=outline:none;text-decoration:none;color:inherit href=#33> 33</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=34><a style=outline:none;text-decoration:none;color:inherit href=#34> 34</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=35><a style=outline:none;text-decoration:none;color:inherit href=#35> 35</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=36><a style=outline:none;text-decoration:none;color:inherit href=#36> 36</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=37><a style=outline:none;text-decoration:none;color:inherit href=#37> 37</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=38><a style=outline:none;text-decoration:none;color:inherit href=#38> 38</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=39><a style=outline:none;text-decoration:none;color:inherit href=#39> 39</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=40><a style=outline:none;text-decoration:none;color:inherit href=#40> 40</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=41><a style=outline:none;text-decoration:none;color:inherit href=#41> 41</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=42><a style=outline:none;text-decoration:none;color:inherit href=#42> 42</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=43><a style=outline:none;text-decoration:none;color:inherit href=#43> 43</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=44><a style=outline:none;text-decoration:none;color:inherit href=#44> 44</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=45><a style=outline:none;text-decoration:none;color:inherit href=#45> 45</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=46><a style=outline:none;text-decoration:none;color:inherit href=#46> 46</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=47><a style=outline:none;text-decoration:none;color:inherit href=#47> 47</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=48><a style=outline:none;text-decoration:none;color:inherit href=#48> 48</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=49><a style=outline:none;text-decoration:none;color:inherit href=#49> 49</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=50><a style=outline:none;text-decoration:none;color:inherit href=#50> 50</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=51><a style=outline:none;text-decoration:none;color:inherit href=#51> 51</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=52><a style=outline:none;text-decoration:none;color:inherit href=#52> 52</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=53><a style=outline:none;text-decoration:none;color:inherit href=#53> 53</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=54><a style=outline:none;text-decoration:none;color:inherit href=#54> 54</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=55><a style=outline:none;text-decoration:none;color:inherit href=#55> 55</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=56><a style=outline:none;text-decoration:none;color:inherit href=#56> 56</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=57><a style=outline:none;text-decoration:none;color:inherit href=#57> 57</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=58><a style=outline:none;text-decoration:none;color:inherit href=#58> 58</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=59><a style=outline:none;text-decoration:none;color:inherit href=#59> 59</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=60><a style=outline:none;text-decoration:none;color:inherit href=#60> 60</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=61><a style=outline:none;text-decoration:none;color:inherit href=#61> 61</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=62><a style=outline:none;text-decoration:none;color:inherit href=#62> 62</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=63><a style=outline:none;text-decoration:none;color:inherit href=#63> 63</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=64><a style=outline:none;text-decoration:none;color:inherit href=#64> 64</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=65><a style=outline:none;text-decoration:none;color:inherit href=#65> 65</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=66><a style=outline:none;text-decoration:none;color:inherit href=#66> 66</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=67><a style=outline:none;text-decoration:none;color:inherit href=#67> 67</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=68><a style=outline:none;text-decoration:none;color:inherit href=#68> 68</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=69><a style=outline:none;text-decoration:none;color:inherit href=#69> 69</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=70><a style=outline:none;text-decoration:none;color:inherit href=#70> 70</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=71><a style=outline:none;text-decoration:none;color:inherit href=#71> 71</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=72><a style=outline:none;text-decoration:none;color:inherit href=#72> 72</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=73><a style=outline:none;text-decoration:none;color:inherit href=#73> 73</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=74><a style=outline:none;text-decoration:none;color:inherit href=#74> 74</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=75><a style=outline:none;text-decoration:none;color:inherit href=#75> 75</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=76><a style=outline:none;text-decoration:none;color:inherit href=#76> 76</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=77><a style=outline:none;text-decoration:none;color:inherit href=#77> 77</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=78><a style=outline:none;text-decoration:none;color:inherit href=#78> 78</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=79><a style=outline:none;text-decoration:none;color:inherit href=#79> 79</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=80><a style=outline:none;text-decoration:none;color:inherit href=#80> 80</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=81><a style=outline:none;text-decoration:none;color:inherit href=#81> 81</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=82><a style=outline:none;text-decoration:none;color:inherit href=#82> 82</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=83><a style=outline:none;text-decoration:none;color:inherit href=#83> 83</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=84><a style=outline:none;text-decoration:none;color:inherit href=#84> 84</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=85><a style=outline:none;text-decoration:none;color:inherit href=#85> 85</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=86><a style=outline:none;text-decoration:none;color:inherit href=#86> 86</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=87><a style=outline:none;text-decoration:none;color:inherit href=#87> 87</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=88><a style=outline:none;text-decoration:none;color:inherit href=#88> 88</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=89><a style=outline:none;text-decoration:none;color:inherit href=#89> 89</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=90><a style=outline:none;text-decoration:none;color:inherit href=#90> 90</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=91><a style=outline:none;text-decoration:none;color:inherit href=#91> 91</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=92><a style=outline:none;text-decoration:none;color:inherit href=#92> 92</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=93><a style=outline:none;text-decoration:none;color:inherit href=#93> 93</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=94><a style=outline:none;text-decoration:none;color:inherit href=#94> 94</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=95><a style=outline:none;text-decoration:none;color:inherit href=#95> 95</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=96><a style=outline:none;text-decoration:none;color:inherit href=#96> 96</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=97><a style=outline:none;text-decoration:none;color:inherit href=#97> 97</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=98><a style=outline:none;text-decoration:none;color:inherit href=#98> 98</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=99><a style=outline:none;text-decoration:none;color:inherit href=#99> 99</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=100><a style=outline:none;text-decoration:none;color:inherit href=#100>100</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=101><a style=outline:none;text-decoration:none;color:inherit href=#101>101</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=102><a style=outline:none;text-decoration:none;color:inherit href=#102>102</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=103><a style=outline:none;text-decoration:none;color:inherit href=#103>103</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=104><a style=outline:none;text-decoration:none;color:inherit href=#104>104</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=105><a style=outline:none;text-decoration:none;color:inherit href=#105>105</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=106><a style=outline:none;text-decoration:none;color:inherit href=#106>106</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=107><a style=outline:none;text-decoration:none;color:inherit href=#107>107</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=108><a style=outline:none;text-decoration:none;color:inherit href=#108>108</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=109><a style=outline:none;text-decoration:none;color:inherit href=#109>109</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=110><a style=outline:none;text-decoration:none;color:inherit href=#110>110</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=111><a style=outline:none;text-decoration:none;color:inherit href=#111>111</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=112><a style=outline:none;text-decoration:none;color:inherit href=#112>112</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=113><a style=outline:none;text-decoration:none;color:inherit href=#113>113</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=114><a style=outline:none;text-decoration:none;color:inherit href=#114>114</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=115><a style=outline:none;text-decoration:none;color:inherit href=#115>115</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=116><a style=outline:none;text-decoration:none;color:inherit href=#116>116</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=117><a style=outline:none;text-decoration:none;color:inherit href=#117>117</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=118><a style=outline:none;text-decoration:none;color:inherit href=#118>118</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=119><a style=outline:none;text-decoration:none;color:inherit href=#119>119</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=120><a style=outline:none;text-decoration:none;color:inherit href=#120>120</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=121><a style=outline:none;text-decoration:none;color:inherit href=#121>121</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=122><a style=outline:none;text-decoration:none;color:inherit href=#122>122</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=123><a style=outline:none;text-decoration:none;color:inherit href=#123>123</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=124><a style=outline:none;text-decoration:none;color:inherit href=#124>124</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=125><a style=outline:none;text-decoration:none;color:inherit href=#125>125</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=126><a style=outline:none;text-decoration:none;color:inherit href=#126>126</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=127><a style=outline:none;text-decoration:none;color:inherit href=#127>127</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=128><a style=outline:none;text-decoration:none;color:inherit href=#128>128</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=129><a style=outline:none;text-decoration:none;color:inherit href=#129>129</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=130><a style=outline:none;text-decoration:none;color:inherit href=#130>130</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=131><a style=outline:none;text-decoration:none;color:inherit href=#131>131</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=132><a style=outline:none;text-decoration:none;color:inherit href=#132>132</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=133><a style=outline:none;text-decoration:none;color:inherit href=#133>133</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=134><a style=outline:none;text-decoration:none;color:inherit href=#134>134</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=135><a style=outline:none;text-decoration:none;color:inherit href=#135>135</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=136><a style=outline:none;text-decoration:none;color:inherit href=#136>136</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=137><a style=outline:none;text-decoration:none;color:inherit href=#137>137</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=138><a style=outline:none;text-decoration:none;color:inherit href=#138>138</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=139><a style=outline:none;text-decoration:none;color:inherit href=#139>139</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=140><a style=outline:none;text-decoration:none;color:inherit href=#140>140</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=color:#1e889b>#include</span><span style=color:#1e889b>&lt;cstdio&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b>#include</span><span style=color:#1e889b>&lt;cstdlib&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b>#include</span><span style=color:#1e889b>&lt;set&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b>#include</span><span style=color:#1e889b>&lt;map&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b>#include</span><span style=color:#1e889b>&lt;vector&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b></span><span style=color:#8b008b;font-weight:700>using</span> <span style=color:#8b008b;font-weight:700>namespace</span> std;
+<span style=color:#8b008b;font-weight:700>typedef</span> <span style=color:#00688b;font-weight:700>long</span> <span style=color:#00688b;font-weight:700>long</span> <span style=color:#00688b;font-weight:700>int</span> int64;
+<span style=color:#8b008b;font-weight:700>typedef</span> set&lt;int64&gt;::iterator siit;
+<span style=color:#00688b;font-weight:700>bool</span> seive[<span style=color:#b452cd>100001</span>] = {<span style=color:#b452cd>0</span>};
+vector&lt;int64&gt; primes;
+<span style=color:#00688b;font-weight:700>bool</span> <span style=color:#008b45>isprime</span>(int64 a){
+	<span style=color:#8b008b;font-weight:700>if</span>(a &lt; <span style=color:#b452cd>100000</span>) <span style=color:#8b008b;font-weight:700>return</span> seive[a] == <span style=color:#658b00>false</span>;
+	<span style=color:#8b008b;font-weight:700>for</span>(int64 lx = <span style=color:#b452cd>2</span>;lx*lx &lt;= a;lx++)
+		<span style=color:#8b008b;font-weight:700>if</span>(a%lx == <span style=color:#b452cd>0</span>)
+			<span style=color:#8b008b;font-weight:700>return</span> <span style=color:#658b00>false</span>;
+	<span style=color:#8b008b;font-weight:700>return</span> <span style=color:#658b00>true</span>;
+}
+vector&lt;pair&lt;int64,<span style=color:#00688b;font-weight:700>int</span>&gt; &gt; getdrc(int64 inp){
+	vector&lt;pair&lt;int64,<span style=color:#00688b;font-weight:700>int</span>&gt; &gt; ret;
+	<span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; primes.size() and primes[lx] &lt;= inp; lx++){
+		<span style=color:#00688b;font-weight:700>int</span> ecnt = <span style=color:#b452cd>0</span>;
+		<span style=color:#8b008b;font-weight:700>while</span>(inp%primes[lx] == <span style=color:#b452cd>0</span>)
+			inp /= primes[lx], ecnt++;
+		<span style=color:#8b008b;font-weight:700>if</span>(ecnt)
+			ret.push_back(pair&lt;int64,<span style=color:#00688b;font-weight:700>int</span>&gt;(primes[lx], ecnt));
+	}
+	<span style=color:#8b008b;font-weight:700>if</span>(inp &gt; <span style=color:#b452cd>1</span>)
+		ret.push_back(pair&lt;int64,<span style=color:#00688b;font-weight:700>int</span>&gt;(inp,<span style=color:#b452cd>1</span>));
+	<span style=color:#8b008b;font-weight:700>return</span> ret;
+}
+set&lt;int64&gt; getdivs(int64 inp){
+	set&lt;int64&gt; divs;
+	vector&lt;pair&lt;int64,<span style=color:#00688b;font-weight:700>int</span>&gt; &gt; drc = getdrc(inp);
+	divs.insert(<span style=color:#b452cd>1</span>);
+	<span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; drc.size();lx++){
+		set&lt;int64&gt; si;
+		int64 drc0 = drc[lx].first;
+		<span style=color:#00688b;font-weight:700>int</span> drc1 = drc[lx].second;
+		<span style=color:#8b008b;font-weight:700>for</span>(siit it = divs.begin(); it != divs.end(); it++){
+			int64 ee = <span style=color:#b452cd>1</span>;
+			<span style=color:#8b008b;font-weight:700>for</span>(int64 xx = <span style=color:#b452cd>0</span>; xx &lt;= drc1; xx++, ee *= drc0)
+				si.insert((*it)*ee);
+		}
+		divs.clear();
+		<span style=color:#8b008b;font-weight:700>for</span>(siit it = si.begin(); it != si.end(); it++)
+			divs.insert(*it);
+	}
+	<span style=color:#8b008b;font-weight:700>return</span> divs;
+}
+
+<span style=color:#00688b;font-weight:700>int</span> <span style=color:#008b45>main</span>(){
+	int64 inp;
+	seive[<span style=color:#b452cd>1</span>] = <span style=color:#658b00>true</span>;
+	<span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>2</span>;lx &lt; <span style=color:#b452cd>100000</span>;lx++){
+		<span style=color:#8b008b;font-weight:700>if</span>(seive[lx] == <span style=color:#658b00>false</span>){
+			primes.push_back((int64)lx);
+			<span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> ly = <span style=color:#b452cd>2</span>;ly*lx &lt; <span style=color:#b452cd>100000</span>;ly++)
+				seive[lx*ly] = <span style=color:#658b00>true</span>;
+		}
+	}
+	<span style=color:#8b008b;font-weight:700>while</span>(<span style=color:#b452cd>1</span>){
+		scanf(<span style=color:#cd5555>&#34;%lld&#34;</span>, &amp;inp);
+		<span style=color:#8b008b;font-weight:700>if</span>(inp == <span style=color:#b452cd>0</span>) <span style=color:#8b008b;font-weight:700>break</span>;
+		set&lt;int64&gt; divs = getdivs(inp);	
+		<span style=color:#228b22>//printf(&#34;divisores: &#34;);
+</span><span style=color:#228b22></span>		<span style=color:#228b22>/*for(siit it = divs.begin(); it != divs.end(); it++)
+</span><span style=color:#228b22>			printf(&#34;%lld &#34;, *it);
+</span><span style=color:#228b22>		printf(&#34;\n&#34;);*/</span>
+
+		vector&lt;int64&gt; Aset;
+		<span style=color:#8b008b;font-weight:700>for</span>(siit it = divs.begin(); it != divs.end(); it++)
+			<span style=color:#8b008b;font-weight:700>if</span>(isprime((*it)+<span style=color:#b452cd>1</span>))
+				Aset.push_back(*it);
+
+		<span style=color:#228b22>/*printf(&#34;Aset: &#34;);
+</span><span style=color:#228b22>		for(int lx = 0;lx &lt; Aset.size(); lx++){
+</span><span style=color:#228b22>			printf(&#34;%lld &#34;, Aset[lx]);
+</span><span style=color:#228b22>		}
+</span><span style=color:#228b22>		printf(&#34;\n&#34;);*/</span>
+		set&lt;int64&gt; Tset; Tset.insert(<span style=color:#b452cd>1</span>);
+		<span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; Aset.size();lx++){
+			set&lt;int64&gt; TTset;
+			<span style=color:#8b008b;font-weight:700>for</span>(siit it = Tset.begin(); it != Tset.end();it++){
+				TTset.insert(*it);
+				<span style=color:#8b008b;font-weight:700>if</span>(inp%((*it)*Aset[lx]) == <span style=color:#b452cd>0</span>)
+					TTset.insert((*it)*Aset[lx]);
+			}
+			Tset.clear(); Tset.insert(<span style=color:#b452cd>1</span>);
+			<span style=color:#8b008b;font-weight:700>for</span>(siit it = TTset.begin(); it != TTset.end(); it++)
+				Tset.insert(*it);
+		}
+		<span style=color:#228b22>/*printf(&#34;Tset: &#34;);
+</span><span style=color:#228b22>		for(siit it = Tset.begin(); it != Tset.end(); it++)
+</span><span style=color:#228b22>			printf(&#34;%lld &#34;, *it);
+</span><span style=color:#228b22>		printf(&#34;\n&#34;);*/</span>
+		<span style=color:#228b22>// N/T part
+</span><span style=color:#228b22></span>		<span style=color:#00688b;font-weight:700>bool</span> ok = <span style=color:#658b00>false</span>;
+		int64 N = inp;
+		<span style=color:#8b008b;font-weight:700>for</span>(siit it = Tset.begin();it != Tset.end() and not ok; it++){
+			int64 T = *it;
+			<span style=color:#228b22>//printf(&#34;prc on %lld\n&#34;, *it);
+</span><span style=color:#228b22></span>			<span style=color:#228b22>// assert T | N
+</span><span style=color:#228b22></span>			vector&lt;pair&lt;int64,<span style=color:#00688b;font-weight:700>int</span>&gt; &gt; ddrc = getdrc(N/T);
+			<span style=color:#228b22>//printf(&#34;N/T = %lld, drc size = %d\n&#34;, N/T, (int) ddrc.size());
+</span><span style=color:#228b22></span>			int64 mut = <span style=color:#b452cd>1</span>;
+			<span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; ddrc.size();lx++){
+				mut *= (ddrc[lx].first-<span style=color:#b452cd>1</span>);
+			}
+
+			<span style=color:#8b008b;font-weight:700>if</span>(T%mut != <span style=color:#b452cd>0</span>)
+				<span style=color:#8b008b;font-weight:700>continue</span>;
+			
+			T /= mut;
+			<span style=color:#228b22>// Check is T = phi(square free) or not
+</span><span style=color:#228b22></span>			<span style=color:#228b22>// if q in ddrc, then p-1 should not divide T now.
+</span><span style=color:#228b22></span>			set&lt;int64&gt; inddrc;
+			<span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; ddrc.size();lx++)
+				inddrc.insert(ddrc[lx].first);
+
+			set&lt;int64&gt; gen; gen.insert(<span style=color:#b452cd>1</span>);
+			<span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; Aset.size();lx++){
+				<span style=color:#8b008b;font-weight:700>if</span>(inddrc.count(Aset[lx]+<span style=color:#b452cd>1</span>))
+					<span style=color:#8b008b;font-weight:700>continue</span>;
+				set&lt;int64&gt; tmp;
+				<span style=color:#8b008b;font-weight:700>for</span>(siit it = gen.begin(); it != gen.end(); it++){
+					tmp.insert(*it);
+					<span style=color:#8b008b;font-weight:700>if</span>(T%((*it)*Aset[lx]) == <span style=color:#b452cd>0</span>)
+						tmp.insert((*it)*Aset[lx]);
+				}
+				gen.clear(); gen.insert(<span style=color:#b452cd>1</span>);
+				<span style=color:#8b008b;font-weight:700>for</span>(siit it = tmp.begin(); it != tmp.end(); it++)
+					gen.insert(*it);
+			}
+			<span style=color:#8b008b;font-weight:700>if</span>(gen.count(T))
+				ok = <span style=color:#658b00>true</span>;
+		}
+		puts(ok ? <span style=color:#cd5555>&#34;Yes&#34;</span>:<span style=color:#cd5555>&#34;No&#34;</span>);
+	}
+	<span style=color:#8b008b;font-weight:700>return</span> <span style=color:#b452cd>0</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>BFS code</strong>頗長，不過其實有<strong>DFS</strong>做法(而且超短，不需要建立A集合和B集合)。</p>
+</div>
+<div class=pagination>
+<a href=/posts/2014/11-01-my-first-online-judge/ class="left arrow">&#8592;</a>
+<a href=/posts/2014/12-18-factoring-polynomials-over-finite-fields/ class="right arrow">&#8594;</a>
+<a href=# class=top>Top</a>
+</div>
+</main>
+<footer>
+<span>
+&copy; <time datetime="2022-01-07 13:42:44.357136726 +0000 UTC m=+0.067152021">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.
+</span>
+</footer>
+</body>
+</html>

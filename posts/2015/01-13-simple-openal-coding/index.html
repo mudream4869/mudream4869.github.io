@@ -1,0 +1,435 @@
+<!doctype html><html lang=zh-tw>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>OpenAL 簡易教學 &#183; Imaginary City</title>
+<link rel=stylesheet href=/css/style.css>
+<link rel=stylesheet href=/css/fonts.css>
+<link rel=stylesheet href=/custom.css>
+<link rel=icon href=favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<link href rel=alternate type=application/rss+xml title="Imaginary City">
+</head>
+<body>
+<nav class=nav>
+<div class=nav-container>
+<a href=/>
+<h2 class=nav-title>Imaginary City</h2>
+</a>
+<ul>
+<li>
+<a href=/about/>
+<span>About</span>
+</a>
+</li>
+<li>
+<a href=/notes/>
+<span>Notes</span>
+</a>
+</li>
+<li>
+<a href=/posts/>
+<span>Posts</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<main>
+<div class=post>
+<div class=post-info>
+<br>
+<time datetime="2015-01-13 08:00:00 +0000 UTC">January 13, 2015</time>
+</div>
+<h1 class=post-title>OpenAL 簡易教學</h1>
+<div class=post-line></div>
+<p>要使用<code>OpenAL</code>，首先要知道裡面的四個東西：</p>
+<ul>
+<li>context: 要播放聲音的地方，可以想成<code>OpenGL</code>裡面的Window</li>
+<li>listener: <code>OpenAL</code> 支援3D音效，所以聽者的資訊是很重要的</li>
+<li>sources: 聲源的資訊</li>
+<li>buffer: 負責聲源的內容</li>
+</ul>
+<p>首先是要將一個聲音檔讀入，以下示範wav檔案：</p>
+<h2 id=wav檔案>WAV檔案</h2>
+<p>其實alut裡面有一個函數可以讀取，可是alut需要額外裝，加上我第一次試驗的code前前後後就只有這一個函數用到alut，所以就來研究一下要如何不靠alut把wav檔案讀入．</p>
+<h3 id=wav檔案格式>WAV檔案格式</h3>
+<p>WAV是binary檔，主要有三個區塊：</p>
+<h4 id=riff-header>RIFF Header</h4>
+<p><a href=http://zh.wikipedia.org/wiki/Resource_Interchange_File_Format>WIKI: RIFF Header</a></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th style=text-align:center>Size</th>
+<th style=text-align:center>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ChunkID</td>
+<td style=text-align:center>4</td>
+<td style=text-align:center>char * 4</td>
+</tr>
+<tr>
+<td>ChunkSize</td>
+<td style=text-align:center>4</td>
+<td style=text-align:center>int * 1</td>
+</tr>
+<tr>
+<td>Format</td>
+<td style=text-align:center>4</td>
+<td style=text-align:center>char * 4</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>ChunkID 必須是 <code>"RIFF"</code></li>
+<li>Format 必須是 <code>"WAVE"</code></li>
+</ul>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3>3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4>4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5>5</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#8b008b;font-weight:700>struct</span> <span style=color:#008b45;font-weight:700>RIFF_Header</span> {
+    <span style=color:#00688b;font-weight:700>char</span> chunkID[<span style=color:#b452cd>4</span>];
+    <span style=color:#00688b;font-weight:700>int</span> chunkSize;<span style=color:#228b22>//size not including chunkSize or chunkID
+</span><span style=color:#228b22></span>    <span style=color:#00688b;font-weight:700>char</span> format[<span style=color:#b452cd>4</span>];
+};
+</code></pre></td></tr></table>
+</div>
+</div><h4 id=wave-格式--資料>WAVE 格式 + 資料</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th style=text-align:center>Size</th>
+<th style=text-align:center>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>subChunk1ID</td>
+<td style=text-align:center>4</td>
+<td style=text-align:center>char * 4</td>
+</tr>
+<tr>
+<td>subChunk1Size</td>
+<td style=text-align:center>4</td>
+<td style=text-align:center>int * 1</td>
+</tr>
+<tr>
+<td>audio Format</td>
+<td style=text-align:center>2</td>
+<td style=text-align:center>short * 1</td>
+</tr>
+<tr>
+<td>num Channel</td>
+<td style=text-align:center>2</td>
+<td style=text-align:center>short * 1</td>
+</tr>
+<tr>
+<td>Sample Rate</td>
+<td style=text-align:center>4</td>
+<td style=text-align:center>int * 1</td>
+</tr>
+<tr>
+<td>Byte Rate</td>
+<td style=text-align:center>4</td>
+<td style=text-align:center>int * 1</td>
+</tr>
+<tr>
+<td>Byte Align</td>
+<td style=text-align:center>2</td>
+<td style=text-align:center>short * 1</td>
+</tr>
+<tr>
+<td>bits Per Sample</td>
+<td style=text-align:center>2</td>
+<td style=text-align:center>short * 1</td>
+</tr>
+<tr>
+<td>subChunk2ID</td>
+<td style=text-align:center>4</td>
+<td style=text-align:center>int * 1</td>
+</tr>
+<tr>
+<td>subChunk2Size</td>
+<td style=text-align:center>4</td>
+<td style=text-align:center>int * 1</td>
+</tr>
+<tr>
+<td>Data</td>
+<td style=text-align:center></td>
+<td style=text-align:center>unsigned char</td>
+</tr>
+</tbody>
+</table>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1> 1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2> 2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3> 3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4> 4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5> 5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6> 6</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7> 7</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8> 8</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=9><a style=outline:none;text-decoration:none;color:inherit href=#9> 9</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=10><a style=outline:none;text-decoration:none;color:inherit href=#10>10</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=11><a style=outline:none;text-decoration:none;color:inherit href=#11>11</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=12><a style=outline:none;text-decoration:none;color:inherit href=#12>12</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=13><a style=outline:none;text-decoration:none;color:inherit href=#13>13</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=14><a style=outline:none;text-decoration:none;color:inherit href=#14>14</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=15><a style=outline:none;text-decoration:none;color:inherit href=#15>15</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#8b008b;font-weight:700>struct</span> <span style=color:#008b45;font-weight:700>WAVE_Format</span> {
+    <span style=color:#00688b;font-weight:700>char</span> subChunkID[<span style=color:#b452cd>4</span>];
+    <span style=color:#00688b;font-weight:700>int</span> subChunkSize;
+    <span style=color:#00688b;font-weight:700>short</span> audioFormat;
+    <span style=color:#00688b;font-weight:700>short</span> numChannels;
+    <span style=color:#00688b;font-weight:700>int</span> sampleRate;
+    <span style=color:#00688b;font-weight:700>int</span> byteRate;
+    <span style=color:#00688b;font-weight:700>short</span> blockAlign;
+    <span style=color:#00688b;font-weight:700>short</span> bitsPerSample;
+};
+
+<span style=color:#8b008b;font-weight:700>struct</span> <span style=color:#008b45;font-weight:700>WAVE_Data</span> {
+    <span style=color:#00688b;font-weight:700>char</span> subChunkID[<span style=color:#b452cd>4</span>]; <span style=color:#228b22>//should contain the word data
+</span><span style=color:#228b22></span>    <span style=color:#00688b;font-weight:700>int</span> subChunk2Size; <span style=color:#228b22>//Stores the size of the data block
+</span><span style=color:#228b22></span>};
+</code></pre></td></tr></table>
+</div>
+</div><p>在設定<code>OpenAL</code>的聲音format時會需要考慮<code>num Channel</code>, <code>bits per Sample</code></p>
+<p>以上是WAV格式簡略的介紹，接下來就是OpenAL的部分</p>
+<h2 id=openal簡略的播放聲音>OpenAL簡略的播放聲音</h2>
+<p>首先是初始化，像在前面有提過的，有device和context</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3>3</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>ALCdevice* dev = alcOpenDevice(<span style=color:#658b00>NULL</span>);
+ALCcontext* ctx = alcCreateContext(dev, <span style=color:#658b00>NULL</span>);
+alcMakeContextCurrent(ctx);
+</code></pre></td></tr></table>
+</div>
+</div><p>Listener 的初始化：</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3>3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4>4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5>5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6>6</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>ALfloat listenerPos[]={<span style=color:#b452cd>0.0</span>,<span style=color:#b452cd>0.0</span>,<span style=color:#b452cd>4.0</span>};
+ALfloat listenerVel[]={<span style=color:#b452cd>0.0</span>,<span style=color:#b452cd>0.0</span>,<span style=color:#b452cd>0.0</span>};
+ALfloat listenerOri[]={<span style=color:#b452cd>0.0</span>,<span style=color:#b452cd>0.0</span>,<span style=color:#b452cd>1.0</span>, <span style=color:#b452cd>0.0</span>,<span style=color:#b452cd>1.0</span>,<span style=color:#b452cd>0.0</span>};
+alListenerfv(AL_POSITION,listenerPos);
+alListenerfv(AL_VELOCITY,listenerVel);
+alListenerfv(AL_ORIENTATION,listenerOri);
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=準備wavloader>準備WavLoader</h3>
+<p>首先比較特別的是我們需要決定好format</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1> 1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2> 2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3> 3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4> 4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5> 5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6> 6</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7> 7</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8> 8</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=9><a style=outline:none;text-decoration:none;color:inherit href=#9> 9</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=10><a style=outline:none;text-decoration:none;color:inherit href=#10>10</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=11><a style=outline:none;text-decoration:none;color:inherit href=#11>11</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#8b008b;font-weight:700>if</span> (wave_format.numChannels == <span style=color:#b452cd>1</span>) {
+    <span style=color:#8b008b;font-weight:700>if</span> (wave_format.bitsPerSample == <span style=color:#b452cd>8</span> )
+        *format = AL_FORMAT_MONO8;
+    <span style=color:#8b008b;font-weight:700>else</span> <span style=color:#008b45>if</span> (wave_format.bitsPerSample == <span style=color:#b452cd>16</span>)
+        *format = AL_FORMAT_MONO16;
+} <span style=color:#8b008b;font-weight:700>else</span> <span style=color:#008b45>if</span> (wave_format.numChannels == <span style=color:#b452cd>2</span>) {
+    <span style=color:#8b008b;font-weight:700>if</span> (wave_format.bitsPerSample == <span style=color:#b452cd>8</span> )
+        *format = AL_FORMAT_STEREO8;
+    <span style=color:#8b008b;font-weight:700>else</span> <span style=color:#8b008b;font-weight:700>if</span> (wave_format.bitsPerSample == <span style=color:#b452cd>16</span>)
+        *format = AL_FORMAT_STEREO16;
+}
+</code></pre></td></tr></table>
+</div>
+</div><div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1> 1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2> 2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3> 3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4> 4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5> 5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6> 6</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7> 7</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8> 8</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=9><a style=outline:none;text-decoration:none;color:inherit href=#9> 9</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=10><a style=outline:none;text-decoration:none;color:inherit href=#10>10</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=11><a style=outline:none;text-decoration:none;color:inherit href=#11>11</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=12><a style=outline:none;text-decoration:none;color:inherit href=#12>12</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=13><a style=outline:none;text-decoration:none;color:inherit href=#13>13</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=14><a style=outline:none;text-decoration:none;color:inherit href=#14>14</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=15><a style=outline:none;text-decoration:none;color:inherit href=#15>15</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=16><a style=outline:none;text-decoration:none;color:inherit href=#16>16</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=17><a style=outline:none;text-decoration:none;color:inherit href=#17>17</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=18><a style=outline:none;text-decoration:none;color:inherit href=#18>18</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=19><a style=outline:none;text-decoration:none;color:inherit href=#19>19</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=20><a style=outline:none;text-decoration:none;color:inherit href=#20>20</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=21><a style=outline:none;text-decoration:none;color:inherit href=#21>21</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=22><a style=outline:none;text-decoration:none;color:inherit href=#22>22</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=23><a style=outline:none;text-decoration:none;color:inherit href=#23>23</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=24><a style=outline:none;text-decoration:none;color:inherit href=#24>24</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=25><a style=outline:none;text-decoration:none;color:inherit href=#25>25</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=26><a style=outline:none;text-decoration:none;color:inherit href=#26>26</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=27><a style=outline:none;text-decoration:none;color:inherit href=#27>27</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=28><a style=outline:none;text-decoration:none;color:inherit href=#28>28</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=29><a style=outline:none;text-decoration:none;color:inherit href=#29>29</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=30><a style=outline:none;text-decoration:none;color:inherit href=#30>30</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=31><a style=outline:none;text-decoration:none;color:inherit href=#31>31</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=32><a style=outline:none;text-decoration:none;color:inherit href=#32>32</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=33><a style=outline:none;text-decoration:none;color:inherit href=#33>33</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=34><a style=outline:none;text-decoration:none;color:inherit href=#34>34</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=35><a style=outline:none;text-decoration:none;color:inherit href=#35>35</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=36><a style=outline:none;text-decoration:none;color:inherit href=#36>36</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=37><a style=outline:none;text-decoration:none;color:inherit href=#37>37</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=38><a style=outline:none;text-decoration:none;color:inherit href=#38>38</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=39><a style=outline:none;text-decoration:none;color:inherit href=#39>39</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=40><a style=outline:none;text-decoration:none;color:inherit href=#40>40</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=41><a style=outline:none;text-decoration:none;color:inherit href=#41>41</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=42><a style=outline:none;text-decoration:none;color:inherit href=#42>42</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=43><a style=outline:none;text-decoration:none;color:inherit href=#43>43</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=44><a style=outline:none;text-decoration:none;color:inherit href=#44>44</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=45><a style=outline:none;text-decoration:none;color:inherit href=#45>45</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=46><a style=outline:none;text-decoration:none;color:inherit href=#46>46</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=47><a style=outline:none;text-decoration:none;color:inherit href=#47>47</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=48><a style=outline:none;text-decoration:none;color:inherit href=#48>48</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=49><a style=outline:none;text-decoration:none;color:inherit href=#49>49</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=50><a style=outline:none;text-decoration:none;color:inherit href=#50>50</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=51><a style=outline:none;text-decoration:none;color:inherit href=#51>51</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=52><a style=outline:none;text-decoration:none;color:inherit href=#52>52</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=53><a style=outline:none;text-decoration:none;color:inherit href=#53>53</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=54><a style=outline:none;text-decoration:none;color:inherit href=#54>54</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#00688b;font-weight:700>bool</span> <span style=color:#008b45>loadWavFile</span>(<span style=color:#8b008b;font-weight:700>const</span> <span style=color:#00688b;font-weight:700>char</span>* filename, 
+    ALuint* buffer, ALsizei* size, ALsizei* frequency, ALenum* format) {
+    fprintf(stderr, <span style=color:#cd5555>&#34;[1] filename = %s</span><span style=color:#cd5555>\n</span><span style=color:#cd5555>&#34;</span>, filename);
+    FILE* soundFile = <span style=color:#658b00>NULL</span>;
+    WAVE_Format wave_format;
+    RIFF_Header riff_header;
+    WAVE_Data wave_data;
+    <span style=color:#00688b;font-weight:700>unsigned</span> <span style=color:#00688b;font-weight:700>char</span>* data = <span style=color:#b452cd>0</span>;
+
+    soundFile = fopen(filename, <span style=color:#cd5555>&#34;rb&#34;</span>);
+    <span style=color:#228b22>// Read in the first chunk into the struct
+</span><span style=color:#228b22></span>    fread(&amp;riff_header, <span style=color:#8b008b;font-weight:700>sizeof</span>(RIFF_Header), <span style=color:#b452cd>1</span>, soundFile);
+    
+    <span style=color:#228b22>//Read in the 2nd chunk for the wave info
+</span><span style=color:#228b22></span>    fread(&amp;wave_format, <span style=color:#8b008b;font-weight:700>sizeof</span>(WAVE_Format), <span style=color:#b452cd>1</span>, soundFile);
+    
+    <span style=color:#228b22>//check for extra parameters;
+</span><span style=color:#228b22></span>    <span style=color:#8b008b;font-weight:700>if</span> (wave_format.subChunkSize &gt; <span style=color:#b452cd>16</span>)
+        fseek(soundFile, <span style=color:#8b008b;font-weight:700>sizeof</span>(<span style=color:#00688b;font-weight:700>short</span>), SEEK_CUR);
+
+    <span style=color:#228b22>//Read in the the last byte of data before the sound file
+</span><span style=color:#228b22></span>    fread(&amp;wave_data, <span style=color:#8b008b;font-weight:700>sizeof</span>(WAVE_Data), <span style=color:#b452cd>1</span>, soundFile);
+        
+    <span style=color:#228b22>//Allocate memory for data
+</span><span style=color:#228b22></span>    data = <span style=color:#8b008b;font-weight:700>new</span> <span style=color:#00688b;font-weight:700>unsigned</span> <span style=color:#00688b;font-weight:700>char</span>[wave_data.subChunk2Size];
+    fread(data, wave_data.subChunk2Size, <span style=color:#b452cd>1</span>, soundFile);
+        
+    <span style=color:#228b22>//Now we set the variables that we passed in with the
+</span><span style=color:#228b22></span>    <span style=color:#228b22>//data from the structs
+</span><span style=color:#228b22></span>    *size = wave_data.subChunk2Size;
+    *frequency = wave_format.sampleRate;
+    <span style=color:#228b22>//The format is worked out by looking at the number of
+</span><span style=color:#228b22></span>    <span style=color:#228b22>//channels and the bits per sample.
+</span><span style=color:#228b22></span>    <span style=color:#8b008b;font-weight:700>if</span> (wave_format.numChannels == <span style=color:#b452cd>1</span>) {
+        <span style=color:#8b008b;font-weight:700>if</span> (wave_format.bitsPerSample == <span style=color:#b452cd>8</span> )
+            *format = AL_FORMAT_MONO8;
+        <span style=color:#8b008b;font-weight:700>else</span> <span style=color:#8b008b;font-weight:700>if</span> (wave_format.bitsPerSample == <span style=color:#b452cd>16</span>)
+            *format = AL_FORMAT_MONO16;
+    } <span style=color:#8b008b;font-weight:700>else</span> <span style=color:#8b008b;font-weight:700>if</span> (wave_format.numChannels == <span style=color:#b452cd>2</span>) {
+        <span style=color:#8b008b;font-weight:700>if</span> (wave_format.bitsPerSample == <span style=color:#b452cd>8</span> )
+            *format = AL_FORMAT_STEREO8;
+        <span style=color:#8b008b;font-weight:700>else</span> <span style=color:#8b008b;font-weight:700>if</span> (wave_format.bitsPerSample == <span style=color:#b452cd>16</span>)
+            *format = AL_FORMAT_STEREO16;
+    }
+    
+    <span style=color:#228b22>//create our openAL buffer and check for success
+</span><span style=color:#228b22></span>    alGenBuffers(<span style=color:#b452cd>1</span>, buffer);
+    alBufferData(*buffer, *format, (<span style=color:#00688b;font-weight:700>void</span>*)data, *size, *frequency);
+    <span style=color:#228b22>//clean up and return true if successful
+</span><span style=color:#228b22></span>    fclose(soundFile);
+    fprintf(stderr, <span style=color:#cd5555>&#34;load ok</span><span style=color:#cd5555>\n</span><span style=color:#cd5555>&#34;</span>);
+    <span style=color:#8b008b;font-weight:700>delete</span>[] data;
+    <span style=color:#8b008b;font-weight:700>return</span> <span style=color:#658b00>true</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>然後就可以播放拉，先把buffer讀取進來，指定給source，然後播放．</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3>3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4>4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5>5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6>6</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7>7</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8>8</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>alGenSources(<span style=color:#b452cd>1</span>, &amp;source);
+loadWavFile(<span style=color:#cd5555>&#34;Under_Water.wav&#34;</span>, buffer, &amp;size, &amp;freq, &amp;format);
+alSourcef(source, AL_PITCH, <span style=color:#b452cd>1.0f</span>);
+alSourcef(source, AL_GAIN, <span style=color:#b452cd>1.0f</span>);
+alSourcefv(source, AL_POSITION, source0Pos);
+alSourcefv(source, AL_VELOCITY, source0Vel);
+alSourcei(source, AL_BUFFER, buffer[<span style=color:#b452cd>0</span>]);
+alSourcePlay(source);  
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=完整code包括多重播放>完整code(包括多重播放)</h2>
+<p><a href=https://gist.github.com/mudream4869/34541dfbd12a747b027e>Gist:altest1.cpp</a></p>
+<h2 id=參考資料>參考資料</h2>
+<ol>
+<li><a href="http://www.dunsanyinteractive.com/blogs/oliver/?cat=16">Tutorial: Loading Wave files in OpenAL without ALUT</a></li>
+<li><a href=http://kcat.strangesoft.net/openal-tutorial.html>Play Compressed Formats With OpenAL</a></li>
+<li><a href=http://open-activewrl.sourceforge.net/data/OpenAL_PGuide.pdf>Creative OpenAL Programmer’s Reference</a></li>
+<li><a href="http://enigma-dev.org/forums/index.php?topic=730.0;wap2">OpenAL Tutorial 1 - Playing WAV files (No ALUT required!)</a></li>
+</ol>
+</div>
+<div class=pagination>
+<a href=/posts/2015/01-02-crpg-another-rpg-engine/ class="left arrow">&#8592;</a>
+<a href=/posts/2015/01-19-dynamic-access-k-th/ class="right arrow">&#8594;</a>
+<a href=# class=top>Top</a>
+</div>
+</main>
+<footer>
+<span>
+&copy; <time datetime="2022-01-07 13:42:44.374601413 +0000 UTC m=+0.084616808">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.
+</span>
+</footer>
+</body>
+</html>

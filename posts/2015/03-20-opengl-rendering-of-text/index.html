@@ -1,0 +1,149 @@
+<!doctype html><html lang=zh-tw>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>在OpenGL繪製中文字 &#183; Imaginary City</title>
+<link rel=stylesheet href=/css/style.css>
+<link rel=stylesheet href=/css/fonts.css>
+<link rel=stylesheet href=/custom.css>
+<link rel=icon href=favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<link href rel=alternate type=application/rss+xml title="Imaginary City">
+<script>MathJax={tex:{inlineMath:[["$","$"]]},displayMath:[["$$","$$"],["[[","]]"]],svg:{fontCache:"global"}}</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script>
+</head>
+<body>
+<nav class=nav>
+<div class=nav-container>
+<a href=/>
+<h2 class=nav-title>Imaginary City</h2>
+</a>
+<ul>
+<li>
+<a href=/about/>
+<span>About</span>
+</a>
+</li>
+<li>
+<a href=/notes/>
+<span>Notes</span>
+</a>
+</li>
+<li>
+<a href=/posts/>
+<span>Posts</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<main>
+<div class=post>
+<div class=post-info>
+<br>
+<time datetime="2015-03-20 08:00:00 +0000 UTC">March 20, 2015</time>
+</div>
+<h1 class=post-title>在OpenGL繪製中文字</h1>
+<div class=post-line></div>
+<p>在OpenGL裏畫中文字一直是個蛋疼的問題，之前有找過一些Library像是<a href=https://github.com/rougier/freetype-gl>Freetype GL</a>，但對我的需求來說算滿大的，所以打算自己刻一個小的。</p>
+<h2 id=freetype-project>Freetype-Project</h2>
+<p>在 <strong>Freetype GL</strong> 也有用到這個，因為要畫字，就需要字形的讀取。</p>
+<p><a href=http://www.freetype.org/freetype2/docs/documentation.html>Documentation</a></p>
+<p>在Freetype project裡面主要有兩種東西：<code>FT_Library</code> 和 <code>FT_Face</code>，<code>FT_Library</code> 負責把管理字形資料，<code>FT_Face</code>負責儲存某個字形的BMP資料。</p>
+<h3 id=ft_library-的初始化>FT_Library 的初始化</h3>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>2</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>FT_Libraray ft_lib;
+FT_Init_FreeType(ft_lib);
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=設定字形>設定字形</h3>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3>3</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>FT_Face face;
+FT_New_Face(ft_lib, font_path, <span style=color:#b452cd>0</span>, face);
+FT_Set_Char_Size(face, <span style=color:#b452cd>0</span>, <span style=color:#b452cd>60</span> &lt;&lt; <span style=color:#b452cd>6</span>, <span style=color:#b452cd>96</span>, <span style=color:#b452cd>96</span>);
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=畫字>畫字</h3>
+<p>因為要支援中文字，所以需要 <code>wchar_t</code></p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3>3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4>4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5>5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6>6</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7>7</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8>8</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=9><a style=outline:none;text-decoration:none;color:inherit href=#9>9</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#8b008b;font-weight:700>const</span> <span style=color:#00688b;font-weight:700>wchar_t</span> wstr[<span style=color:#b452cd>20</span>] = <span style=color:#cd5555>L</span><span style=color:#cd5555>&#34;你我他&#34;</span>;
+<span style=color:#00688b;font-weight:700>int</span> pen_x = <span style=color:#b452cd>300</span>, pen_y = <span style=color:#b452cd>200</span>;
+FT_GlyphSlot  slot = face-&gt;glyph;  <span style=color:#228b22>/* a small shortcut */</span>
+
+<span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;wstr[lx] != <span style=color:#b452cd>0</span>; lx++ ){
+	FT_Load_Char(face, (<span style=color:#00688b;font-weight:700>unsigned</span> <span style=color:#00688b;font-weight:700>char</span>)wstr[lx], FT_LOAD_RENDER );
+	<span style=color:#228b22>// draw slot-&gt;bitmap at (pen_x + slot-&gt;bitmap_left, pen_y - slot-&gt;bitmap_top);
+</span><span style=color:#228b22></span>	pen_x += slot-&gt;advance.x &gt;&gt; <span style=color:#b452cd>6</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=slot-bitmap>slot->bitmap</h3>
+<p><code>slot->bitmap</code>本身是<a href=http://www.freetype.org/freetype2/docs/reference/ft2-basic_types.html#FT_Bitmap>FT_Bitmap</a>的結構</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1> 1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2> 2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3> 3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4> 4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5> 5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6> 6</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7> 7</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8> 8</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=9><a style=outline:none;text-decoration:none;color:inherit href=#9> 9</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=10><a style=outline:none;text-decoration:none;color:inherit href=#10>10</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#8b008b;font-weight:700>typedef</span> <span style=color:#8b008b;font-weight:700>struct</span>  <span style=color:#008b45;font-weight:700>FT_Bitmap_</span>{
+	<span style=color:#00688b;font-weight:700>unsigned</span> <span style=color:#00688b;font-weight:700>int</span>    rows;
+	<span style=color:#00688b;font-weight:700>unsigned</span> <span style=color:#00688b;font-weight:700>int</span>    width;
+	<span style=color:#00688b;font-weight:700>int</span>             pitch;
+	<span style=color:#00688b;font-weight:700>unsigned</span> <span style=color:#00688b;font-weight:700>char</span>*  buffer;
+	<span style=color:#00688b;font-weight:700>unsigned</span> <span style=color:#00688b;font-weight:700>short</span>  num_grays;
+	<span style=color:#00688b;font-weight:700>unsigned</span> <span style=color:#00688b;font-weight:700>char</span>   pixel_mode;
+	<span style=color:#00688b;font-weight:700>unsigned</span> <span style=color:#00688b;font-weight:700>char</span>   palette_mode;
+	<span style=color:#00688b;font-weight:700>void</span>*           palette;
+} FT_Bitmap;
+</code></pre></td></tr></table>
+</div>
+</div><p>需要的資料是<code>buffer</code>、<code>width</code>、<code>rows</code>，分別是bitmap pixel資料、寬和高</p>
+<p>最後弄成這樣的一個小工具：<a href=https://github.com/mudream4869/min-ftgl>minftgl</a></p>
+</div>
+<div class=pagination>
+<a href=/posts/2015/03-08-note-15-puzzle/ class="left arrow">&#8592;</a>
+<a href=/posts/2015/05-24-acm-codeforce-542-d-superheros-job/ class="right arrow">&#8594;</a>
+<a href=# class=top>Top</a>
+</div>
+</main>
+<footer>
+<span>
+&copy; <time datetime="2022-01-07 13:42:44.382000492 +0000 UTC m=+0.092015887">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.
+</span>
+</footer>
+</body>
+</html>

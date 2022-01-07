@@ -1,0 +1,371 @@
+<!doctype html><html lang=zh-tw>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>區間相異元素個數 &#183; Imaginary City</title>
+<link rel=stylesheet href=/css/style.css>
+<link rel=stylesheet href=/css/fonts.css>
+<link rel=stylesheet href=/custom.css>
+<link rel=icon href=favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<link href rel=alternate type=application/rss+xml title="Imaginary City">
+<script>MathJax={tex:{inlineMath:[["$","$"]]},displayMath:[["$$","$$"],["[[","]]"]],svg:{fontCache:"global"}}</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script>
+</head>
+<body>
+<nav class=nav>
+<div class=nav-container>
+<a href=/>
+<h2 class=nav-title>Imaginary City</h2>
+</a>
+<ul>
+<li>
+<a href=/about/>
+<span>About</span>
+</a>
+</li>
+<li>
+<a href=/notes/>
+<span>Notes</span>
+</a>
+</li>
+<li>
+<a href=/posts/>
+<span>Posts</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<main>
+<div class=post>
+<div class=post-info>
+<br>
+<time datetime="2015-08-05 08:00:00 +0000 UTC">August 5, 2015</time>
+</div>
+<h1 class=post-title>區間相異元素個數</h1>
+<div class=post-line></div>
+<p>最近又看了一些東西，決定來整理一下。</p>
+<p>首先是完整的問題定義：</p>
+<p>給一個數列和一堆區間查詢，每次要回答區間內有多少相異元素個數。</p>
+<h2 id=離線處理>離線處理</h2>
+<p>最一開始的作法（也算是最容易實作，但能憑空想出真的是天才）是莫式算法。</p>
+<h3 id=莫式算法mos-algorithm>莫式算法（Mo&rsquo;s algorithm）</h3>
+<p>莫式算法是用來對付不具區間加法性質的問題。</p>
+<p>首先我們考慮一個問題的化減：假如我們知道 $[l, r]$ 的結果，我們有沒有辦法$O(1)$或 $O(lgN)$ 知道 $[l, r+1]$ （或 $[l+1, r]$ 、$[l-1,r]$、$[l, r-1]$）</p>
+<p>這是可以達成的，我們只需要維護一個陣列，然後好好維護<strong>值對應到個數</strong>，就可以了。</p>
+<p>所以假如我們要從 $[l_1, r_1]$ 推到 $[l_2, r_2]$，我們只需要 $O(|l_1-l_2|+|r_1-r_2|)$ ，即兩點的曼哈頓距離。所以現在我們要先解決一個問題：給定平面上一堆點，我們要按照什麼順序拜訪他們，讓曼哈頓距離總和<strong>不錯小</strong>。</p>
+<p>第一個想法是：因為拜訪是一條線，所以這問題的下界就是平面上的生成樹，可以證明是$O(N\sqrt N)$，那要做這些點的生成樹嘛？不，這太可怕了(<a href=http://wyfcyx.logdown.com/posts/231702-summary-planar-manhattan-distance-minimum-spanning-tree-is-o-nlogn-algorithm>ref1</a>)，事實上，有個簡易可行的方法可以達到$O(N\sqrt N)$：</p>
+<p>按照 $[\frac{左界}{\sqrt{N}}]$ , $右界$ 排序後的順序拜訪，即可獲得$O(N\sqrt{N})$的複雜度，雖然不會是最小，但只差常數級別。</p>
+<h3 id=線段樹>線段樹</h3>
+<p>主要想法是從原本的區間和線段樹來的：我們希望在區間出現第二個相同的數時，那個位置是$0$。
+所以把查詢區間按照左界排好，當我們要從查詢$[l, ?]$到$[l+1, ?]時，我們去把和$l$相同數字的下一個位置從$0$更新成$1$</p>
+<p>舉例：</p>
+<p>數列: 5 1 4 1 2</p>
+<p>要查詢 $[1, ?]$類時</p>
+<p>線段樹: 1 1 1 0 1</p>
+<p>要查詢 $[2, ?]$類時</p>
+<p>線段樹: 1 1 1 0 1</p>
+<p>要查詢 $[3, ?]$類時</p>
+<p>線段樹: 1 1 1 1 1</p>
+<p>複雜度會是 $O(N\log{N})$</p>
+<p>這裏推薦一個題目：<a href=http://www.spoj.com/problems/DQUERY/en/>SPOJ DQUERY</a></p>
+<h2 id=在線處理>在線處理</h2>
+<h3 id=持久化線段樹>持久化線段樹</h3>
+<p>可以發現離線處理的線段樹前後只差1個位置的變化，所以可以把他升級成持久化線段樹。</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>  1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>  2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3>  3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4>  4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5>  5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6>  6</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7>  7</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8>  8</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=9><a style=outline:none;text-decoration:none;color:inherit href=#9>  9</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=10><a style=outline:none;text-decoration:none;color:inherit href=#10> 10</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=11><a style=outline:none;text-decoration:none;color:inherit href=#11> 11</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=12><a style=outline:none;text-decoration:none;color:inherit href=#12> 12</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=13><a style=outline:none;text-decoration:none;color:inherit href=#13> 13</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=14><a style=outline:none;text-decoration:none;color:inherit href=#14> 14</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=15><a style=outline:none;text-decoration:none;color:inherit href=#15> 15</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=16><a style=outline:none;text-decoration:none;color:inherit href=#16> 16</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=17><a style=outline:none;text-decoration:none;color:inherit href=#17> 17</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=18><a style=outline:none;text-decoration:none;color:inherit href=#18> 18</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=19><a style=outline:none;text-decoration:none;color:inherit href=#19> 19</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=20><a style=outline:none;text-decoration:none;color:inherit href=#20> 20</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=21><a style=outline:none;text-decoration:none;color:inherit href=#21> 21</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=22><a style=outline:none;text-decoration:none;color:inherit href=#22> 22</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=23><a style=outline:none;text-decoration:none;color:inherit href=#23> 23</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=24><a style=outline:none;text-decoration:none;color:inherit href=#24> 24</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=25><a style=outline:none;text-decoration:none;color:inherit href=#25> 25</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=26><a style=outline:none;text-decoration:none;color:inherit href=#26> 26</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=27><a style=outline:none;text-decoration:none;color:inherit href=#27> 27</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=28><a style=outline:none;text-decoration:none;color:inherit href=#28> 28</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=29><a style=outline:none;text-decoration:none;color:inherit href=#29> 29</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=30><a style=outline:none;text-decoration:none;color:inherit href=#30> 30</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=31><a style=outline:none;text-decoration:none;color:inherit href=#31> 31</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=32><a style=outline:none;text-decoration:none;color:inherit href=#32> 32</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=33><a style=outline:none;text-decoration:none;color:inherit href=#33> 33</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=34><a style=outline:none;text-decoration:none;color:inherit href=#34> 34</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=35><a style=outline:none;text-decoration:none;color:inherit href=#35> 35</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=36><a style=outline:none;text-decoration:none;color:inherit href=#36> 36</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=37><a style=outline:none;text-decoration:none;color:inherit href=#37> 37</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=38><a style=outline:none;text-decoration:none;color:inherit href=#38> 38</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=39><a style=outline:none;text-decoration:none;color:inherit href=#39> 39</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=40><a style=outline:none;text-decoration:none;color:inherit href=#40> 40</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=41><a style=outline:none;text-decoration:none;color:inherit href=#41> 41</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=42><a style=outline:none;text-decoration:none;color:inherit href=#42> 42</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=43><a style=outline:none;text-decoration:none;color:inherit href=#43> 43</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=44><a style=outline:none;text-decoration:none;color:inherit href=#44> 44</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=45><a style=outline:none;text-decoration:none;color:inherit href=#45> 45</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=46><a style=outline:none;text-decoration:none;color:inherit href=#46> 46</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=47><a style=outline:none;text-decoration:none;color:inherit href=#47> 47</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=48><a style=outline:none;text-decoration:none;color:inherit href=#48> 48</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=49><a style=outline:none;text-decoration:none;color:inherit href=#49> 49</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=50><a style=outline:none;text-decoration:none;color:inherit href=#50> 50</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=51><a style=outline:none;text-decoration:none;color:inherit href=#51> 51</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=52><a style=outline:none;text-decoration:none;color:inherit href=#52> 52</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=53><a style=outline:none;text-decoration:none;color:inherit href=#53> 53</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=54><a style=outline:none;text-decoration:none;color:inherit href=#54> 54</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=55><a style=outline:none;text-decoration:none;color:inherit href=#55> 55</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=56><a style=outline:none;text-decoration:none;color:inherit href=#56> 56</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=57><a style=outline:none;text-decoration:none;color:inherit href=#57> 57</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=58><a style=outline:none;text-decoration:none;color:inherit href=#58> 58</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=59><a style=outline:none;text-decoration:none;color:inherit href=#59> 59</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=60><a style=outline:none;text-decoration:none;color:inherit href=#60> 60</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=61><a style=outline:none;text-decoration:none;color:inherit href=#61> 61</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=62><a style=outline:none;text-decoration:none;color:inherit href=#62> 62</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=63><a style=outline:none;text-decoration:none;color:inherit href=#63> 63</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=64><a style=outline:none;text-decoration:none;color:inherit href=#64> 64</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=65><a style=outline:none;text-decoration:none;color:inherit href=#65> 65</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=66><a style=outline:none;text-decoration:none;color:inherit href=#66> 66</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=67><a style=outline:none;text-decoration:none;color:inherit href=#67> 67</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=68><a style=outline:none;text-decoration:none;color:inherit href=#68> 68</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=69><a style=outline:none;text-decoration:none;color:inherit href=#69> 69</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=70><a style=outline:none;text-decoration:none;color:inherit href=#70> 70</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=71><a style=outline:none;text-decoration:none;color:inherit href=#71> 71</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=72><a style=outline:none;text-decoration:none;color:inherit href=#72> 72</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=73><a style=outline:none;text-decoration:none;color:inherit href=#73> 73</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=74><a style=outline:none;text-decoration:none;color:inherit href=#74> 74</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=75><a style=outline:none;text-decoration:none;color:inherit href=#75> 75</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=76><a style=outline:none;text-decoration:none;color:inherit href=#76> 76</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=77><a style=outline:none;text-decoration:none;color:inherit href=#77> 77</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=78><a style=outline:none;text-decoration:none;color:inherit href=#78> 78</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=79><a style=outline:none;text-decoration:none;color:inherit href=#79> 79</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=80><a style=outline:none;text-decoration:none;color:inherit href=#80> 80</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=81><a style=outline:none;text-decoration:none;color:inherit href=#81> 81</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=82><a style=outline:none;text-decoration:none;color:inherit href=#82> 82</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=83><a style=outline:none;text-decoration:none;color:inherit href=#83> 83</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=84><a style=outline:none;text-decoration:none;color:inherit href=#84> 84</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=85><a style=outline:none;text-decoration:none;color:inherit href=#85> 85</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=86><a style=outline:none;text-decoration:none;color:inherit href=#86> 86</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=87><a style=outline:none;text-decoration:none;color:inherit href=#87> 87</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=88><a style=outline:none;text-decoration:none;color:inherit href=#88> 88</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=89><a style=outline:none;text-decoration:none;color:inherit href=#89> 89</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=90><a style=outline:none;text-decoration:none;color:inherit href=#90> 90</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=91><a style=outline:none;text-decoration:none;color:inherit href=#91> 91</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=92><a style=outline:none;text-decoration:none;color:inherit href=#92> 92</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=93><a style=outline:none;text-decoration:none;color:inherit href=#93> 93</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=94><a style=outline:none;text-decoration:none;color:inherit href=#94> 94</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=95><a style=outline:none;text-decoration:none;color:inherit href=#95> 95</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=96><a style=outline:none;text-decoration:none;color:inherit href=#96> 96</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=97><a style=outline:none;text-decoration:none;color:inherit href=#97> 97</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=98><a style=outline:none;text-decoration:none;color:inherit href=#98> 98</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=99><a style=outline:none;text-decoration:none;color:inherit href=#99> 99</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=100><a style=outline:none;text-decoration:none;color:inherit href=#100>100</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=101><a style=outline:none;text-decoration:none;color:inherit href=#101>101</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=102><a style=outline:none;text-decoration:none;color:inherit href=#102>102</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=103><a style=outline:none;text-decoration:none;color:inherit href=#103>103</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=104><a style=outline:none;text-decoration:none;color:inherit href=#104>104</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=105><a style=outline:none;text-decoration:none;color:inherit href=#105>105</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=106><a style=outline:none;text-decoration:none;color:inherit href=#106>106</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=107><a style=outline:none;text-decoration:none;color:inherit href=#107>107</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=108><a style=outline:none;text-decoration:none;color:inherit href=#108>108</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=109><a style=outline:none;text-decoration:none;color:inherit href=#109>109</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=110><a style=outline:none;text-decoration:none;color:inherit href=#110>110</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=111><a style=outline:none;text-decoration:none;color:inherit href=#111>111</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=112><a style=outline:none;text-decoration:none;color:inherit href=#112>112</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=113><a style=outline:none;text-decoration:none;color:inherit href=#113>113</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=114><a style=outline:none;text-decoration:none;color:inherit href=#114>114</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=115><a style=outline:none;text-decoration:none;color:inherit href=#115>115</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=116><a style=outline:none;text-decoration:none;color:inherit href=#116>116</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=117><a style=outline:none;text-decoration:none;color:inherit href=#117>117</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=118><a style=outline:none;text-decoration:none;color:inherit href=#118>118</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=119><a style=outline:none;text-decoration:none;color:inherit href=#119>119</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#1e889b>#include</span> <span style=color:#1e889b>&lt;cstdio&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b>#include</span> <span style=color:#1e889b>&lt;cstdlib&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b>#include</span> <span style=color:#1e889b>&lt;algorithm&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b>#include</span> <span style=color:#1e889b>&lt;vector&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b>#include</span> <span style=color:#1e889b>&lt;map&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b>#include</span> <span style=color:#1e889b>&lt;set&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b></span>
+<span style=color:#8b008b;font-weight:700>using</span> <span style=color:#8b008b;font-weight:700>namespace</span> std;
+
+<span style=color:#8b008b;font-weight:700>struct</span> <span style=color:#008b45;font-weight:700>node</span>{
+    <span style=color:#00688b;font-weight:700>int</span> l, r, val;
+    node *ln, *rn;
+    node(<span style=color:#00688b;font-weight:700>int</span> _l, <span style=color:#00688b;font-weight:700>int</span> _r, <span style=color:#00688b;font-weight:700>int</span> _v = <span style=color:#b452cd>0</span>, node* _ln = <span style=color:#8b008b;font-weight:700>nullptr</span>, node* _rn = <span style=color:#8b008b;font-weight:700>nullptr</span>){
+        val = _v, l = _l, r = _r;
+        ln = _ln, rn = _rn;
+        <span style=color:#8b008b;font-weight:700>return</span>;
+    }
+    ~node(){
+        <span style=color:#8b008b;font-weight:700>if</span>(ln != <span style=color:#8b008b;font-weight:700>nullptr</span>) <span style=color:#8b008b;font-weight:700>delete</span> ln;
+        <span style=color:#8b008b;font-weight:700>if</span>(rn != <span style=color:#8b008b;font-weight:700>nullptr</span>) <span style=color:#8b008b;font-weight:700>delete</span> rn;
+        <span style=color:#8b008b;font-weight:700>return</span>;
+    }
+    <span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>Update</span>(){
+        val = <span style=color:#b452cd>0</span>;
+        <span style=color:#8b008b;font-weight:700>if</span>(ln != <span style=color:#8b008b;font-weight:700>nullptr</span>) val += ln-&gt;val;
+        <span style=color:#8b008b;font-weight:700>if</span>(rn != <span style=color:#8b008b;font-weight:700>nullptr</span>) val += rn-&gt;val;
+        <span style=color:#8b008b;font-weight:700>return</span>;
+    }
+};
+
+node* <span style=color:#008b45>Cp</span>(node* a){<span style=color:#8b008b;font-weight:700>return</span> <span style=color:#8b008b;font-weight:700>new</span> node(a-&gt;l, a-&gt;r, a-&gt;val, a-&gt;ln, a-&gt;rn);}
+
+node* <span style=color:#008b45>Build</span>(<span style=color:#00688b;font-weight:700>int</span> l, <span style=color:#00688b;font-weight:700>int</span> r){
+    <span style=color:#8b008b;font-weight:700>if</span>(l == r) <span style=color:#8b008b;font-weight:700>return</span> <span style=color:#8b008b;font-weight:700>new</span> node(l, r);
+    <span style=color:#00688b;font-weight:700>int</span> md = (l+r)&gt;&gt;<span style=color:#b452cd>1</span>;
+    <span style=color:#8b008b;font-weight:700>return</span> <span style=color:#8b008b;font-weight:700>new</span> node(l, r, <span style=color:#b452cd>0</span>, Build(l, md), Build(md+<span style=color:#b452cd>1</span>, r));
+}
+
+<span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>Update</span>(node* nd, <span style=color:#00688b;font-weight:700>int</span> p, <span style=color:#00688b;font-weight:700>int</span> v){
+    <span style=color:#8b008b;font-weight:700>if</span>(nd-&gt;l == nd-&gt;r and nd-&gt;l == p){nd-&gt;val = v; <span style=color:#8b008b;font-weight:700>return</span>;}
+    <span style=color:#00688b;font-weight:700>int</span> md = (nd-&gt;l+nd-&gt;r)&gt;&gt;<span style=color:#b452cd>1</span>;
+    <span style=color:#8b008b;font-weight:700>if</span>(p&lt;=md) Update(nd-&gt;ln, p, v);
+    <span style=color:#8b008b;font-weight:700>else</span> Update(nd-&gt;rn, p, v);
+    nd-&gt;Update();
+    <span style=color:#8b008b;font-weight:700>return</span>;
+}
+
+node* <span style=color:#008b45>CUpdate</span>(node* nd, <span style=color:#00688b;font-weight:700>int</span> p, <span style=color:#00688b;font-weight:700>int</span> v){
+    nd = Cp(nd);
+    <span style=color:#8b008b;font-weight:700>if</span>(nd-&gt;l == nd-&gt;r and nd-&gt;l == p){nd-&gt;val = v; <span style=color:#8b008b;font-weight:700>return</span> nd;}
+    <span style=color:#00688b;font-weight:700>int</span> md = (nd-&gt;l+nd-&gt;r)&gt;&gt;<span style=color:#b452cd>1</span>;
+    <span style=color:#8b008b;font-weight:700>if</span>(p&lt;=md) nd-&gt;ln = CUpdate(nd-&gt;ln, p, v);
+    <span style=color:#8b008b;font-weight:700>else</span> nd-&gt;rn = CUpdate(nd-&gt;rn, p, v);
+    nd-&gt;Update();
+    <span style=color:#8b008b;font-weight:700>return</span> nd;
+}
+
+<span style=color:#00688b;font-weight:700>int</span> <span style=color:#008b45>Query</span>(node* nd, <span style=color:#00688b;font-weight:700>int</span> l, <span style=color:#00688b;font-weight:700>int</span> r){
+    <span style=color:#00688b;font-weight:700>int</span> ret = <span style=color:#b452cd>0</span>;
+    <span style=color:#8b008b;font-weight:700>if</span>(nd-&gt;l == l and nd-&gt;r == r) <span style=color:#8b008b;font-weight:700>return</span> nd-&gt;val;
+    <span style=color:#00688b;font-weight:700>int</span> md = (nd-&gt;l+nd-&gt;r)&gt;&gt;<span style=color:#b452cd>1</span>;
+    <span style=color:#8b008b;font-weight:700>if</span>(r&lt;=md) <span style=color:#8b008b;font-weight:700>return</span> Query(nd-&gt;ln, l, r);
+    <span style=color:#8b008b;font-weight:700>else</span> <span style=color:#8b008b;font-weight:700>if</span>(l &lt;= md) <span style=color:#8b008b;font-weight:700>return</span> Query(nd-&gt;ln, l, md) + Query(nd-&gt;rn, md+<span style=color:#b452cd>1</span>, r);
+    <span style=color:#8b008b;font-weight:700>else</span> <span style=color:#8b008b;font-weight:700>return</span> Query(nd-&gt;rn, l, r);
+}
+
+<span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>Print</span>(node* nd){
+    <span style=color:#8b008b;font-weight:700>if</span>(nd-&gt;l == nd-&gt;r){ printf(<span style=color:#cd5555>&#34;%d &#34;</span>, nd-&gt;val); <span style=color:#8b008b;font-weight:700>return</span>; }
+    Print(nd-&gt;ln);
+    Print(nd-&gt;rn);
+    <span style=color:#8b008b;font-weight:700>return</span>;
+}
+
+<span style=color:#00688b;font-weight:700>int</span> arr[<span style=color:#b452cd>30000</span>];
+<span style=color:#00688b;font-weight:700>int</span> nxt[<span style=color:#b452cd>30000</span>];
+node* nd[<span style=color:#b452cd>30000</span>];
+
+<span style=color:#00688b;font-weight:700>int</span> <span style=color:#008b45>main</span>(){
+    <span style=color:#00688b;font-weight:700>int</span> n; scanf(<span style=color:#cd5555>&#34;%d&#34;</span>, &amp;n);
+    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; n;lx++) scanf(<span style=color:#cd5555>&#34;%d&#34;</span>, arr+lx);
+    map&lt;<span style=color:#00688b;font-weight:700>int</span>,<span style=color:#00688b;font-weight:700>int</span>&gt; poi, ptr;
+    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; n;lx++) nxt[lx] = n;
+    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; n;lx++){
+        <span style=color:#8b008b;font-weight:700>if</span>(ptr.count(arr[lx]))
+            nxt[ptr[arr[lx]]] = lx;
+        ptr[arr[lx]] = lx;
+        <span style=color:#8b008b;font-weight:700>if</span>(poi.count(arr[lx]) == <span style=color:#b452cd>0</span>)
+            poi[arr[lx]] = poi.size();
+        arr[lx] = poi[arr[lx]];
+    }
+    nd[<span style=color:#b452cd>0</span>] = Build(<span style=color:#b452cd>0</span>, n-<span style=color:#b452cd>1</span>);
+    <span style=color:#00688b;font-weight:700>bool</span> vis[<span style=color:#b452cd>30000</span>] = {<span style=color:#b452cd>0</span>};
+    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; n;lx++){
+        <span style=color:#8b008b;font-weight:700>if</span>(vis[arr[lx]]) <span style=color:#8b008b;font-weight:700>continue</span>;
+        vis[arr[lx]] = <span style=color:#b452cd>1</span>;
+        Update(nd[<span style=color:#b452cd>0</span>], lx, <span style=color:#b452cd>1</span>);
+    }
+    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>1</span>;lx &lt; n;lx++){
+        <span style=color:#8b008b;font-weight:700>if</span>(nxt[lx-<span style=color:#b452cd>1</span>] == n) nd[lx] = nd[lx-<span style=color:#b452cd>1</span>];
+        <span style=color:#8b008b;font-weight:700>else</span> nd[lx] = CUpdate(nd[lx-<span style=color:#b452cd>1</span>], nxt[lx-<span style=color:#b452cd>1</span>], <span style=color:#b452cd>1</span>);
+    }
+
+<span style=color:#1e889b>#ifdef DEBUG
+</span><span style=color:#1e889b></span>    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; n;lx++){
+        Print(nd[lx]);
+        puts(<span style=color:#cd5555>&#34;&#34;</span>);
+    }
+<span style=color:#1e889b>#endif
+</span><span style=color:#1e889b></span>
+    <span style=color:#00688b;font-weight:700>int</span> q; scanf(<span style=color:#cd5555>&#34;%d&#34;</span>, &amp;q);
+    <span style=color:#8b008b;font-weight:700>while</span>(q--){
+        <span style=color:#00688b;font-weight:700>int</span> a, b; scanf(<span style=color:#cd5555>&#34;%d %d&#34;</span>, &amp;a, &amp;b);
+        a--, b--;
+        printf(<span style=color:#cd5555>&#34;%d</span><span style=color:#cd5555>\n</span><span style=color:#cd5555>&#34;</span>, Query(nd[a], a, b));
+    }
+
+    <span style=color:#8b008b;font-weight:700>return</span> <span style=color:#b452cd>0</span>;
+}
+
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=總結>總結</h2>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>可在線</th>
+<th>複雜度</th>
+<th>量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>莫式</td>
+<td>否</td>
+<td>$O(N\sqrt{N})$</td>
+<td>少</td>
+</tr>
+<tr>
+<td>線段樹</td>
+<td>否</td>
+<td>$O(N\log{N})$</td>
+<td>中</td>
+</tr>
+<tr>
+<td>持久化線段樹</td>
+<td>是</td>
+<td>$O(N\log{N})$</td>
+<td>中</td>
+</tr>
+</tbody>
+</table>
+<h2 id=參考資料>參考資料</h2>
+<ul>
+<li>ref1 : <a href=http://wyfcyx.logdown.com/posts/231702-summary-planar-manhattan-distance-minimum-spanning-tree-is-o-nlogn-algorithm>【总结】平面manhattan距离最小生成树的O(nlogn)算法 by wyfcyx</a></li>
+</ul>
+</div>
+<div class=pagination>
+<a href=/posts/2015/06-07-acm-bobert-stick-values/ class="left arrow">&#8592;</a>
+<a href=/posts/2017/01-25-get-driver-license/ class="right arrow">&#8594;</a>
+<a href=# class=top>Top</a>
+</div>
+</main>
+<footer>
+<span>
+&copy; <time datetime="2022-01-07 13:42:44.414020835 +0000 UTC m=+0.124036230">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.
+</span>
+</footer>
+</body>
+</html>

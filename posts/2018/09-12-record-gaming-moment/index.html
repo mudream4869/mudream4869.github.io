@@ -1,0 +1,86 @@
+<!doctype html><html lang=zh-tw>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>Recording Gaming Moment &#183; Imaginary City</title>
+<link rel=stylesheet href=/css/style.css>
+<link rel=stylesheet href=/css/fonts.css>
+<link rel=stylesheet href=/custom.css>
+<link rel=icon href=favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<link href rel=alternate type=application/rss+xml title="Imaginary City">
+</head>
+<body>
+<nav class=nav>
+<div class=nav-container>
+<a href=/>
+<h2 class=nav-title>Imaginary City</h2>
+</a>
+<ul>
+<li>
+<a href=/about/>
+<span>About</span>
+</a>
+</li>
+<li>
+<a href=/notes/>
+<span>Notes</span>
+</a>
+</li>
+<li>
+<a href=/posts/>
+<span>Posts</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<main>
+<div class=post>
+<div class=post-info>
+<br>
+<time datetime="2018-09-12 08:00:00 +0000 UTC">September 12, 2018</time>
+</div>
+<h1 class=post-title>Recording Gaming Moment</h1>
+<div class=post-line></div>
+<p>最近嘗試錄製 FTB Lite 3.0 的影片，發現聲音很糟。</p>
+<h2 id=obs>OBS</h2>
+<p>我是用 OBS 作為錄製工具，一方面來說之前我也拿來在 Twitch 上直播。</p>
+<p>在聲音方面是因為聲音是擷取自麥克，所以來看看有沒有什麼方法可以直接抓取遊戲聲音。在 OBS 的一些 Windows 的教學文找，似乎只要新增一個叫做「Destop Audio」的音源即可，可是 Mac OS 並沒有給出這個選項。</p>
+<p>硬是要擷取，是需要一個叫做 <a href=https://github.com/pje/WavTap>Wavtap</a> 的軟體。</p>
+<h2 id=wavtap>WavTap</h2>
+<p>運作原理類似 <strong>Sypthon</strong> ，也是把訊號來源重新導向。</p>
+<p>在 Mac OS 上安裝，需要看版本，像是我的版本是 <strong>Sierra</strong>，那麼要先在 Recovery Mode <code>⌘R</code> 把一部份 <strong>SIP</strong> 關掉：</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>csrutil enable --without kext
+</code></pre></td></tr></table>
+</div>
+</div><p>然後再一般模式才能成功安裝，並且執行。</p>
+<h2 id=sip>SIP</h2>
+<p>全名是 System Integrity Protection，是 10.11 追加的，主要是用來保護系統還有驅動程式。</p>
+<h2 id=參考>參考</h2>
+<ul>
+<li><a href=https://github.com/pje/WavTap>WavTap</a></li>
+<li><a href=https://obsproject.com/forum/resources/setting-up-mac-desktop-sound-capture-with-wavtap.79/>Setting Up Mac Desktop Sound Capture with WavTap</a></li>
+<li><a href=https://cms.35g.tw/coding/%E9%97%9C%E9%96%89-osx-10-11-sip-system-integrity-protection-%E5%8A%9F%E8%83%BD/>關閉 OSX 10.11 SIP (System Integrity Protection) 功能</a></li>
+</ul>
+</div>
+<div class=pagination>
+<a href=/posts/2018/08-28-2018-comic/ class="left arrow">&#8592;</a>
+<a href=/posts/2019/01-12-pbrtcraft-episode-1/ class="right arrow">&#8594;</a>
+<a href=# class=top>Top</a>
+</div>
+</main>
+<footer>
+<span>
+&copy; <time datetime="2022-01-07 13:42:44.429555402 +0000 UTC m=+0.139570797">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.
+</span>
+</footer>
+</body>
+</html>
