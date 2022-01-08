@@ -1,0 +1,158 @@
+<!doctype html><html lang=zh-tw>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>CRPG 進度筆記 &#183; Imaginary City</title>
+<link rel=stylesheet href=/css/style.css>
+<link rel=stylesheet href=/css/fonts.css>
+<link rel=stylesheet href=/custom.css>
+<link rel=icon href=favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<link href rel=alternate type=application/rss+xml title="Imaginary City">
+</head>
+<body>
+<nav class=nav>
+<div class=nav-container>
+<a href=/>
+<h2 class=nav-title>Imaginary City</h2>
+</a>
+<ul>
+<li>
+<a href=/about/>
+<span>About</span>
+</a>
+</li>
+<li>
+<a href=/notes/>
+<span>Notes</span>
+</a>
+</li>
+<li>
+<a href=/posts/>
+<span>Posts</span>
+</a>
+</li>
+<li>
+<a href=/tags/>
+<span>Tags</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<main>
+<div class=post>
+<div class=post-info>
+<br>
+<time datetime="2015-06-02 08:00:00 +0000 UTC">June 2, 2015</time>
+</div>
+<h1 class=post-title>CRPG 進度筆記</h1>
+<div class=post-line></div>
+<p>CRPG基本上進入收尾，除了加一些新功能，還弄了一些有助於Debug的小工具，之後便會focus在建立<strong>大型測試</strong>上，可以順便把必要支援的事件功能追加上去。</p>
+<h2 id=alpha版document>Alpha版Document</h2>
+<p>目前應該算是Alpha版吧，目前在Gitbook上準備中，一邊編寫，一邊設計的更方便。</p>
+<p><a href=https://www.gitbook.com/book/mudream4869/crpg-alpha-document/details>Document</a></p>
+<h2 id=主要檔案結構>主要檔案結構</h2>
+<p>我調整了一下檔案結構，以利之後開發測試。</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3>3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4>4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5>5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6>6</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7>7</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8>8</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=9><a style=outline:none;text-decoration:none;color:inherit href=#9>9</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>+ crpg
+|-+ src
+  |- main.cpp
+  |- ...
+|-+ testdata
+  |-+ 測試資料1
+  |-+ 測試資料2
+|-+ unittest
+  |- ...
+</code></pre></td></tr></table>
+</div>
+</div><p>如此引擎Code就可以和測試資料分離。</p>
+<h2 id=資源類-enhencement>資源類 Enhencement</h2>
+<h3 id=中文字>中文字</h3>
+<p><a href=/posts/2015/03-20-opengl-rendering-of-text/>在OpenGL繪製中文字</a></p>
+<p>其實是有個Libray，只是覺得有點大有點沒必要，所以自己刻一個，總之，這也OK了。</p>
+<h3 id=讀取ogg>讀取OGG</h3>
+<p>用<code>libvorbis</code>達成。</p>
+<p><a href=https://github.com/mudream4869/crpg/blob/master/src/audioloader/audioloader.cpp>Code On Github</a></p>
+<p>基本上就是用<code>libvorbis</code>讀進來，然後把buffer扔進<code>OpenAL</code></p>
+<h2 id=功能類-enhencement>功能類 Enhencement</h2>
+<h3 id=自動追蹤主角>自動追蹤主角</h3>
+<p>這功能大概滿常用的，不過這需要在<code>Event</code>裡面增加一個屬性：<strong>觸發頻率</strong>。</p>
+<h2 id=其他類>其他類</h2>
+<h3 id=除錯命名空間>除錯命名空間</h3>
+<p>特別幫除錯訊息開了一個命名空間，以利之後整理有意義的除錯訊息</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3>3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4>4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5>5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6>6</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7>7</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8>8</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#8b008b;font-weight:700>namespace</span> Debugger{
+    <span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>Init</span>();
+    <span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>Print</span>(<span style=color:#8b008b;font-weight:700>const</span> <span style=color:#00688b;font-weight:700>char</span>*, ... );
+    <span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>Print</span>(std::string);
+    <span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>Print</span>(PyObject*);
+    <span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>PrintPyErr</span>();
+    <span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>CheckPyObject</span>(PyObject*, <span style=color:#8b008b;font-weight:700>const</span> <span style=color:#00688b;font-weight:700>char</span>*, ... );
+};
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=開始邊寫說明>開始邊寫說明</h3>
+<p>目前大致把格式制定為</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3>3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4>4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5>5</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#228b22>/** 
+</span><span style=color:#228b22> *  @brief: 功能描述
+</span><span style=color:#228b22> *  @param: 參數描述
+</span><span style=color:#228b22> *  @return: 回傳值描述 
+</span><span style=color:#228b22> */</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+<hr>
+<script src=https://utteranc.es/client.js repo=mudream4869/imgcity-comment issue-term=pathname theme=github-light crossorigin=anonymous async></script>
+</div>
+<div class=pagination>
+<a href=/posts/2015/05-24-acm-codeforce-542-d-superheros-job/ class="left arrow">
+&#8592;Codeforce 542 D. Superhero's Job
+</a>
+<a href=/posts/2015/06-07-acm-bobert-stick-values/ class="right arrow">
+BOBERT - Stick values&#8594;
+</a>
+<a href=# class=top>Top</a>
+</div>
+</main>
+<footer>
+<span>
+&copy; <time datetime="2022-01-08 06:35:21.714994768 +0000 UTC m=+0.113609304">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.
+</span>
+</footer>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!doctype html><html lang=zh-tw>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>CRPG 進度筆記 &#183; Imaginary City</title>
+<link rel=stylesheet href=/css/style.css>
+<link rel=stylesheet href=/css/fonts.css>
+<link rel=stylesheet href=/custom.css>
+<link rel=icon href=favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<link href rel=alternate type=application/rss+xml title="Imaginary City">
+</head>
+<body>
+<nav class=nav>
+<div class=nav-container>
+<a href=/>
+<h2 class=nav-title>Imaginary City</h2>
+</a>
+<ul>
+<li>
+<a href=/about/>
+<span>About</span>
+</a>
+</li>
+<li>
+<a href=/notes/>
+<span>Notes</span>
+</a>
+</li>
+<li>
+<a href=/posts/>
+<span>Posts</span>
+</a>
+</li>
+<li>
+<a href=/tags/>
+<span>Tags</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<main>
+<div class=post>
+<div class=post-info>
+<br>
+<time datetime="2015-02-17 08:00:00 +0000 UTC">February 17, 2015</time>
+</div>
+<h1 class=post-title>CRPG 進度筆記</h1>
+<p style=text-align:center>
+<a href=/tags/RPG>#RPG</a>
+<a href=/tags/C++>#C++</a>
+</p>
+<div class=post-line></div>
+<p>最近弄了很多東西進去，寫一寫當作備忘好了。之後大概要調整架構＋新增功能＋弄一些小的測試用遊戲。</p>
+<p>大致有幾個重要的更新：</p>
+<h2 id=跨-windows-和-mac-ox>跨 Windows 和 Mac OX</h2>
+<p>這就是刻crpg主要原因之一，終於處理好了！</p>
+<h3 id=opengl-openal-python-api>OpenGL, OpenAL, Python API</h3>
+<p>主要問題大概是：</p>
+<ul>
+<li>編譯參數</li>
+<li>引用標頭檔</li>
+<li>編譯用環境</li>
+</ul>
+<p>在Mac OX底下，編譯和引用這三個就跟喝一杯開水一樣簡單，可是在Windows底下光是安裝<code>Glut</code>就超麻煩，還好，有人寫了一個類似Linux的終端機的：<a href=http://msys2.github.io>MSYS2</a>用<code>pacman</code>指令就可以把需要的Package安裝好。需要注意的是，<code>MSYS2</code>底下分兩種<code>g++</code>編譯器，一個是<code>usr\bin\g++</code>，這是給<code>MSYS2</code>自己用的，可以用</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3>3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4>4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5>5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6>6</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7>7</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=color:#1e889b>#include</span><span style=color:#1e889b>&lt;cstdio&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b></span><span style=color:#00688b;font-weight:700>int</span> <span style=color:#008b45>main</span>(){
+<span style=color:#1e889b>#ifdef _WIN32
+</span><span style=color:#1e889b></span>    printf(<span style=color:#cd5555>&#34;win32</span><span style=color:#cd5555>\n</span><span style=color:#cd5555>&#34;</span>);
+<span style=color:#1e889b>#endif
+</span><span style=color:#1e889b></span>    <span style=color:#8b008b;font-weight:700>return</span> <span style=color:#b452cd>0</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>測試，會發現並沒有出現<code>win32</code>。另外一個需要用pacman安裝<code>mingw-w64-g++</code>(可能更長)，這編譯出來才會是給Windows用的。</p>
+<p>安裝的對應關鍵字：</p>
+<ul>
+<li>Glut -> freeglut</li>
+<li>OpenAL -> openal</li>
+<li>Python API -> python</li>
+</ul>
+<p>可以這樣找</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ pacman -Sl | grep keyword
+</code></pre></td></tr></table>
+</div>
+</div><p>然後安裝</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ pacman -S package_name
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=讀取目錄下的檔案>讀取目錄下的檔案</h2>
+<p>當初沒有寫這個，本來是要使用者自己把清單寫在一個目錄底下的檔案，仔細想想不太合理，就決定要把這部分處理好。原本是想直接用<a href=http://www.boost.org/doc/libs/1_57_0/libs/filesystem/doc/index.htm>Boost:File System</a>，但想到只是要實做羅列檔案，就用一個大Library，cost好像有點高。所以決定自己弄一個：</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1> 1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2> 2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3> 3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4> 4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5> 5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6> 6</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7> 7</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8> 8</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=9><a style=outline:none;text-decoration:none;color:inherit href=#9> 9</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=10><a style=outline:none;text-decoration:none;color:inherit href=#10>10</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=11><a style=outline:none;text-decoration:none;color:inherit href=#11>11</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=12><a style=outline:none;text-decoration:none;color:inherit href=#12>12</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=13><a style=outline:none;text-decoration:none;color:inherit href=#13>13</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=14><a style=outline:none;text-decoration:none;color:inherit href=#14>14</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=15><a style=outline:none;text-decoration:none;color:inherit href=#15>15</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=16><a style=outline:none;text-decoration:none;color:inherit href=#16>16</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=17><a style=outline:none;text-decoration:none;color:inherit href=#17>17</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=18><a style=outline:none;text-decoration:none;color:inherit href=#18>18</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=19><a style=outline:none;text-decoration:none;color:inherit href=#19>19</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=20><a style=outline:none;text-decoration:none;color:inherit href=#20>20</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=21><a style=outline:none;text-decoration:none;color:inherit href=#21>21</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=22><a style=outline:none;text-decoration:none;color:inherit href=#22>22</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=23><a style=outline:none;text-decoration:none;color:inherit href=#23>23</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=24><a style=outline:none;text-decoration:none;color:inherit href=#24>24</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=25><a style=outline:none;text-decoration:none;color:inherit href=#25>25</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=26><a style=outline:none;text-decoration:none;color:inherit href=#26>26</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=27><a style=outline:none;text-decoration:none;color:inherit href=#27>27</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=28><a style=outline:none;text-decoration:none;color:inherit href=#28>28</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=29><a style=outline:none;text-decoration:none;color:inherit href=#29>29</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=30><a style=outline:none;text-decoration:none;color:inherit href=#30>30</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=31><a style=outline:none;text-decoration:none;color:inherit href=#31>31</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=32><a style=outline:none;text-decoration:none;color:inherit href=#32>32</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=33><a style=outline:none;text-decoration:none;color:inherit href=#33>33</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=34><a style=outline:none;text-decoration:none;color:inherit href=#34>34</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=35><a style=outline:none;text-decoration:none;color:inherit href=#35>35</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=36><a style=outline:none;text-decoration:none;color:inherit href=#36>36</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=37><a style=outline:none;text-decoration:none;color:inherit href=#37>37</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=38><a style=outline:none;text-decoration:none;color:inherit href=#38>38</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=39><a style=outline:none;text-decoration:none;color:inherit href=#39>39</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=40><a style=outline:none;text-decoration:none;color:inherit href=#40>40</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=41><a style=outline:none;text-decoration:none;color:inherit href=#41>41</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=42><a style=outline:none;text-decoration:none;color:inherit href=#42>42</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=43><a style=outline:none;text-decoration:none;color:inherit href=#43>43</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=44><a style=outline:none;text-decoration:none;color:inherit href=#44>44</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=45><a style=outline:none;text-decoration:none;color:inherit href=#45>45</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=46><a style=outline:none;text-decoration:none;color:inherit href=#46>46</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=47><a style=outline:none;text-decoration:none;color:inherit href=#47>47</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=color:#228b22>// For GetFileUnderDir header
+</span><span style=color:#228b22></span><span style=color:#1e889b>#ifdef __APPLE__
+</span><span style=color:#1e889b>#include</span> <span style=color:#1e889b>&lt;sys/types.h&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b>#include</span> <span style=color:#1e889b>&lt;dirent.h&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b>#elif __WIN32
+</span><span style=color:#1e889b>#include</span> <span style=color:#1e889b>&lt;windows.h&gt;</span><span style=color:#1e889b>
+</span><span style=color:#1e889b>#endif
+</span><span style=color:#1e889b></span><span style=color:#228b22>// ------
+</span><span style=color:#228b22></span>std::vector&lt;std::string&gt; GetFileUnderDir(<span style=color:#8b008b;font-weight:700>const</span> <span style=color:#00688b;font-weight:700>char</span>* dir_name){
+    std::vector&lt;std::string&gt; ret;
+
+<span style=color:#1e889b>#ifdef __APPLE__
+</span><span style=color:#1e889b></span>    DIR* dp = opendir(dir_name);
+    <span style=color:#8b008b;font-weight:700>struct</span> <span style=color:#008b45;font-weight:700>dirent</span>* ep; 
+    <span style=color:#8b008b;font-weight:700>if</span>(dp != <span style=color:#658b00>NULL</span>){
+        <span style=color:#8b008b;font-weight:700>while</span>((ep = readdir(dp))){
+            <span style=color:#8b008b;font-weight:700>if</span>(strcmp(ep-&gt;d_name, <span style=color:#cd5555>&#34;.&#34;</span>) == <span style=color:#b452cd>0</span> or
+               strcmp(ep-&gt;d_name, <span style=color:#cd5555>&#34;..&#34;</span>) == <span style=color:#b452cd>0</span>) <span style=color:#8b008b;font-weight:700>continue</span>;
+            ret.push_back(std::string(ep-&gt;d_name));
+        }
+        closedir(dp);
+    }<span style=color:#8b008b;font-weight:700>else</span>{
+        fprintf(stderr, <span style=color:#cd5555>&#34;Couldn&#39;t open the directory</span><span style=color:#cd5555>\n</span><span style=color:#cd5555>&#34;</span>);
+        exit(<span style=color:#b452cd>1</span>);
+    }
+<span style=color:#1e889b>#elif __WIN32
+</span><span style=color:#1e889b></span>    
+    WIN32_FIND_DATA data;
+    HANDLE hFind;
+    <span style=color:#00688b;font-weight:700>char</span> d_dir_name[<span style=color:#b452cd>100</span>];
+    sprintf(d_dir_name, <span style=color:#cd5555>&#34;%s/*&#34;</span>, dir_name);
+    hFind = FindFirstFile(d_dir_name, &amp;data);
+    <span style=color:#8b008b;font-weight:700>if</span> (hFind == INVALID_HANDLE_VALUE) {
+        fprintf(stderr, <span style=color:#cd5555>&#34;Couldn&#39;t open the directory</span><span style=color:#cd5555>\n</span><span style=color:#cd5555>&#34;</span>);
+        exit(<span style=color:#b452cd>1</span>);
+    } 
+    <span style=color:#8b008b;font-weight:700>else</span>{
+        <span style=color:#8b008b;font-weight:700>do</span>{
+            <span style=color:#8b008b;font-weight:700>if</span>(strcmp(data.cFileName, <span style=color:#cd5555>&#34;.&#34;</span>) == <span style=color:#b452cd>0</span> or 
+               strcmp(data.cFileName, <span style=color:#cd5555>&#34;..&#34;</span>) == <span style=color:#b452cd>0</span>) <span style=color:#8b008b;font-weight:700>continue</span>;
+            ret.push_back(std::string(data.cFileName));
+        }<span style=color:#8b008b;font-weight:700>while</span>(FindNextFile(hFind, &amp;data));
+        FindClose(hFind);
+    }
+<span style=color:#1e889b>#endif
+</span><span style=color:#1e889b></span>    <span style=color:#8b008b;font-weight:700>return</span> ret;
+}
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=紅線問題>紅線問題</h2>
+<p>在圖片邊緣會有模糊的紅線，發現是在讀取Image時，設定Texture處裡部分不好。
+<strong>class Image</strong> 在讀取Tile時要把<code>GL_TEXTURE_MIN_FILTER</code>, <code>GL_TEXTURE_MAX_FILTER</code> 設成 <code>GL_NEAREST</code>即可。</p>
+<h2 id=env過於神通廣大>Env過於神通廣大</h2>
+<p>這是初期在處理公共變數的餘毒，有這種東西，有點不科學：</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3>3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4>4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5>5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6>6</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=color:#8b008b;font-weight:700>struct</span> <span style=color:#008b45;font-weight:700>StrCompare</span>{
+    <span style=color:#00688b;font-weight:700>bool</span> <span style=color:#008b45>operator</span>() (<span style=color:#8b008b;font-weight:700>const</span> <span style=color:#00688b;font-weight:700>char</span>* str1, <span style=color:#8b008b;font-weight:700>const</span> <span style=color:#00688b;font-weight:700>char</span>* str2) <span style=color:#8b008b;font-weight:700>const</span>{
+        <span style=color:#8b008b;font-weight:700>return</span> std::strcmp(str1, str2) &lt; <span style=color:#b452cd>0</span>;
+    }
+};
+<span style=color:#8b008b;font-weight:700>typedef</span> std::map&lt;<span style=color:#8b008b;font-weight:700>const</span> <span style=color:#00688b;font-weight:700>char</span>*, <span style=color:#00688b;font-weight:700>void</span>* , StrCompare&gt; Env;
+</code></pre></td></tr></table>
+</div>
+</div><p>一個 <code>map: string -> void*</code>裏面包有太多髒東西。</p>
+<p>大致把一部份<code>instance</code>放在<code>class</code>裏的<code>static</code>就清理好了，整理好後，code變乾淨許多，不再有一堆奇奇怪怪的pointer存取。</p>
+<h2 id=component>Component</h2>
+<p>參考自<a href=http://gameprogrammingpatterns.com/component.html>Component - Decoupling Pattern</a></p>
+<p>在準備寫<strong>Hero</strong>的腳本控制時發現和<strong>Event</strong>腳本控制重複太多地方，於是用Component的方法把共同的地方接出來，很快就處理好了。像是<code>MoverComponent</code>:</p>
+<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1> 1</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2> 2</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3> 3</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4> 4</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5> 5</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6> 6</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7> 7</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8> 8</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=9><a style=outline:none;text-decoration:none;color:inherit href=#9> 9</a>
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=10><a style=outline:none;text-decoration:none;color:inherit href=#10>10</a>
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#8b008b;font-weight:700>class</span> <span style=color:#008b45;font-weight:700>MoverComponent</span>{
+<span style=color:#8b008b;font-weight:700>public</span>:
+    MoverComponent(Object* _obj);
+    <span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>TickEvent</span>(<span style=color:#00688b;font-weight:700>int</span> delta_time);
+    <span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>Update</span>();
+<span style=color:#228b22>//...
+</span><span style=color:#228b22></span><span style=color:#8b008b;font-weight:700>private</span>:
+<span style=color:#228b22>//...    
+</span><span style=color:#228b22></span>    Object* obj;
+};
+</code></pre></td></tr></table>
+</div>
+</div><p>在Event裏，會呼叫<code>new MoverComponent(this)</code>，借由操縱MoverComponent間接操作Event裏的status。當然Event是繼承自Object。這時也順便發現Hero也需要相同的Component，讓腳本可以操作他。</p>
+<h2 id=尚未處理的重要issue>尚未處理的重要Issue</h2>
+<p>目前還有一些重要Issue，有必要處理掉</p>
+<h3 id=bsd講完第一次話就crash>BSD講完第一次話就Crash</h3>
+<p>這毫無頭緒._. <a href=https://github.com/mudream4869/crpg/issues/14>Issue:#14</a></p>
+<h3 id=讀取ogg或mp3>讀取ogg或mp3</h3>
+<p>目前的引擎只可以讀取wav，這有點傷，因為wav檔沒經過壓縮，通常有點大，一個遊戲少說二三十的音效和音樂下來就差很多。</p>
+<h3 id=資源控管>資源控管</h3>
+<p>目前有很多new出來的東西都沒delete掉，考慮用<code>shared_ptr</code>解決。</p>
+<hr>
+<script src=https://utteranc.es/client.js repo=mudream4869/imgcity-comment issue-term=pathname theme=github-light crossorigin=anonymous async></script>
+</div>
+<div class=pagination>
+<a href=/posts/2015/01-25-crpg-stage2/ class="left arrow">
+&#8592;CRPG 第二階段完成
+</a>
+<a href=/posts/2015/03-08-note-15-puzzle/ class="right arrow">
+15-puzzle&#8594;
+</a>
+<a href=# class=top>Top</a>
+</div>
+</main>
+<footer>
+<span>
+&copy; <time datetime="2022-01-08 06:35:21.702528482 +0000 UTC m=+0.101142918">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.
+</span>
+</footer>
+</body>
+</html>
