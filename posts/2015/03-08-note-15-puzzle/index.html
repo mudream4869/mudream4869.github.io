@@ -11,9 +11,10 @@
 <link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png>
 <link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
 <link href rel=alternate type=application/rss+xml title="Imaginary City">
-<script>MathJax={tex:{inlineMath:[["$","$"]]},displayMath:[["$$","$$"],["[[","]]"]],svg:{fontCache:"global"}}</script>
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-<script id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js onload=renderMathInElement(document.body)></script>
+<script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})})</script>
 </head>
 <body>
 <nav class=nav>
@@ -247,7 +248,7 @@
 </main>
 <footer>
 <span>
-&copy; <time datetime="2022-01-08 06:35:21.708405517 +0000 UTC m=+0.107019953">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.
+&copy; <time datetime="2022-01-21 13:30:48.327945612 +0000 UTC m=+0.142468247">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.
 </span>
 </footer>
 </body>
