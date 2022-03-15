@@ -1,243 +1,157 @@
-<!doctype html><html lang=zh-tw>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<title>因式分解一個有限域多項式 &#183; Imaginary City</title>
-<link rel=stylesheet href=/css/style.css>
-<link rel=stylesheet href=/css/fonts.css>
-<link rel=stylesheet href=/custom.css>
-<link rel=icon href=favicon.ico>
-<link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<link href rel=alternate type=application/rss+xml title="Imaginary City">
-<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css>
-<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js></script>
+<!doctype html><html lang=zh-tw><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>因式分解一個有限域多項式 &#183; Imaginary City</title><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css><link rel=stylesheet href=/custom.css><link rel=icon href=favicon.ico><link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link href rel=alternate type=application/rss+xml title="Imaginary City"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js></script>
 <script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js onload=renderMathInElement(document.body)></script>
-<script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})})</script>
-</head>
-<body>
-<nav class=nav>
-<div class=nav-container>
-<a href=/>
-<h2 class=nav-title>Imaginary City</h2>
-</a>
-<ul>
-<li>
-<a href=/about/>
-<span>About</span>
-</a>
-</li>
-<li>
-<a href=/notes/>
-<span>Notes</span>
-</a>
-</li>
-<li>
-<a href=/posts/>
-<span>Posts</span>
-</a>
-</li>
-<li>
-<a href=/tags/>
-<span>Tags</span>
-</a>
-</li>
-</ul>
-</div>
-</nav>
-<main>
-<div class=post>
-<div class=post-info>
-<br>
-<time datetime="2014-12-18 08:00:00 +0000 UTC">December 18, 2014</time>
-</div>
-<h1 class=post-title>因式分解一個有限域多項式</h1>
-<div class=post-line></div>
-<p>是在前幾天的代導課，老師上完Berlekamp&rsquo;s Algorithm後，就說把它刻出來就可以加分XD．那就來寫吧，反正這比賽時也刻東西刻習慣了（誒</p>
-<p>其實在寫的時候還頗驚訝，之前在看正整數的分解目前尚未有多項式時間的分解法（印象中最目前好的是Number Field Seive?），可是在一個有限域的多項式竟然可以有多項式時間（對於要分解的多項式的degree），有限域也未免太強（條件）了．</p>
-<p>總之這裡就不細題Berlekamp&rsquo;s Algorithm細節了，給個Wiki（<a href="http://en.wikipedia.org/wiki/Berlekamp's_algorithm">Wiki: Berlekamp&rsquo;s Algorithm</a>）</p>
-<p>實做起來還真有點麻煩，除了F[x]的代數，還需要計算一個矩陣的Null Space(把一個矩陣當作線性變換後的Null Space)，光是把矩陣弄成 <strong>echelon form</strong> ，就是一些時間的coding+debug．之後再輸出Basis．</p>
-<p>後面就是一些 $F[x]$ 的代數操作，把operator寫好，用c++寫也是可以很漂亮的（可是常數可能就要哭泣了）．</p>
-<p>獻醜一下，有限域用 $Z_p$ 實做，總覺得Coding Style有點爛掉，看看笑笑就好：
-<a href="https://drive.google.com/file/d/0B2iNVzqlGaGIbWxRd29Ec1lqWFU/view?usp=sharing">FactPolyFF.zip</a></p>
-<p>然後主要的 <strong>Factorization</strong> Code:
+<script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})})</script></head><body><nav class=nav><div class=nav-container><a href=/><h2 class=nav-title>Imaginary City</h2></a><ul><li><a href=/about/><span>About</span></a></li><li><a href=/notes/><span>Notes</span></a></li><li><a href=/posts/><span>Posts</span></a></li><li><a href=/tags/><span>Tags</span></a></li></ul></div></nav><main><div class=post><div class=post-info><br><time datetime="2014-12-18 08:00:00 +0000 UTC">December 18, 2014</time></div><h1 class=post-title>因式分解一個有限域多項式</h1><div class=post-line></div><p>是在前幾天的代導課，老師上完Berlekamp&rsquo;s Algorithm後，就說把它刻出來就可以加分XD．那就來寫吧，反正這比賽時也刻東西刻習慣了（誒</p><p>其實在寫的時候還頗驚訝，之前在看正整數的分解目前尚未有多項式時間的分解法（印象中最目前好的是Number Field Seive?），可是在一個有限域的多項式竟然可以有多項式時間（對於要分解的多項式的degree），有限域也未免太強（條件）了．</p><p>總之這裡就不細題Berlekamp&rsquo;s Algorithm細節了，給個Wiki（<a href="http://en.wikipedia.org/wiki/Berlekamp's_algorithm">Wiki: Berlekamp&rsquo;s Algorithm</a>）</p><p>實做起來還真有點麻煩，除了F[x]的代數，還需要計算一個矩陣的Null Space(把一個矩陣當作線性變換後的Null Space)，光是把矩陣弄成 <strong>echelon form</strong> ，就是一些時間的coding+debug．之後再輸出Basis．</p><p>後面就是一些 $F[x]$ 的代數操作，把operator寫好，用c++寫也是可以很漂亮的（可是常數可能就要哭泣了）．</p><p>獻醜一下，有限域用 $Z_p$ 實做，總覺得Coding Style有點爛掉，看看笑笑就好：
+<a href="https://drive.google.com/file/d/0B2iNVzqlGaGIbWxRd29Ec1lqWFU/view?usp=sharing">FactPolyFF.zip</a></p><p>然後主要的 <strong>Factorization</strong> Code:
 <code>poly</code> 的 <code>r</code> 是最高項次 + 1， <code>set_r()</code> 會把 <code>r</code> 調整好
 <code>an[lx]</code> 是系數
 <code>make_monic()</code> 會把多項式轉（乘上一個數）成首一多項式，並且回傳原本的首項系數．
 <code>除法/</code> 回傳 <code>(商，餘數)</code>
-<code>diff()</code> 會微分多項式</p>
-<p>順便把<strong>Square free</strong>的分解也寫進去了，完整一點．</p>
-<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1> 1</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2> 2</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3> 3</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4> 4</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5> 5</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6> 6</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7> 7</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8> 8</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=9><a style=outline:none;text-decoration:none;color:inherit href=#9> 9</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=10><a style=outline:none;text-decoration:none;color:inherit href=#10>10</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=11><a style=outline:none;text-decoration:none;color:inherit href=#11>11</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=12><a style=outline:none;text-decoration:none;color:inherit href=#12>12</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=13><a style=outline:none;text-decoration:none;color:inherit href=#13>13</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=14><a style=outline:none;text-decoration:none;color:inherit href=#14>14</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=15><a style=outline:none;text-decoration:none;color:inherit href=#15>15</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=16><a style=outline:none;text-decoration:none;color:inherit href=#16>16</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=17><a style=outline:none;text-decoration:none;color:inherit href=#17>17</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=18><a style=outline:none;text-decoration:none;color:inherit href=#18>18</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=19><a style=outline:none;text-decoration:none;color:inherit href=#19>19</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=20><a style=outline:none;text-decoration:none;color:inherit href=#20>20</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=21><a style=outline:none;text-decoration:none;color:inherit href=#21>21</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=22><a style=outline:none;text-decoration:none;color:inherit href=#22>22</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=23><a style=outline:none;text-decoration:none;color:inherit href=#23>23</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=24><a style=outline:none;text-decoration:none;color:inherit href=#24>24</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=25><a style=outline:none;text-decoration:none;color:inherit href=#25>25</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=26><a style=outline:none;text-decoration:none;color:inherit href=#26>26</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=27><a style=outline:none;text-decoration:none;color:inherit href=#27>27</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=28><a style=outline:none;text-decoration:none;color:inherit href=#28>28</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=29><a style=outline:none;text-decoration:none;color:inherit href=#29>29</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=30><a style=outline:none;text-decoration:none;color:inherit href=#30>30</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=31><a style=outline:none;text-decoration:none;color:inherit href=#31>31</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=32><a style=outline:none;text-decoration:none;color:inherit href=#32>32</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=33><a style=outline:none;text-decoration:none;color:inherit href=#33>33</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=34><a style=outline:none;text-decoration:none;color:inherit href=#34>34</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=35><a style=outline:none;text-decoration:none;color:inherit href=#35>35</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=36><a style=outline:none;text-decoration:none;color:inherit href=#36>36</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=37><a style=outline:none;text-decoration:none;color:inherit href=#37>37</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=38><a style=outline:none;text-decoration:none;color:inherit href=#38>38</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=39><a style=outline:none;text-decoration:none;color:inherit href=#39>39</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=40><a style=outline:none;text-decoration:none;color:inherit href=#40>40</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=41><a style=outline:none;text-decoration:none;color:inherit href=#41>41</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=42><a style=outline:none;text-decoration:none;color:inherit href=#42>42</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=43><a style=outline:none;text-decoration:none;color:inherit href=#43>43</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=44><a style=outline:none;text-decoration:none;color:inherit href=#44>44</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=45><a style=outline:none;text-decoration:none;color:inherit href=#45>45</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=46><a style=outline:none;text-decoration:none;color:inherit href=#46>46</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=47><a style=outline:none;text-decoration:none;color:inherit href=#47>47</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=48><a style=outline:none;text-decoration:none;color:inherit href=#48>48</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=49><a style=outline:none;text-decoration:none;color:inherit href=#49>49</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=50><a style=outline:none;text-decoration:none;color:inherit href=#50>50</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=51><a style=outline:none;text-decoration:none;color:inherit href=#51>51</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=52><a style=outline:none;text-decoration:none;color:inherit href=#52>52</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=53><a style=outline:none;text-decoration:none;color:inherit href=#53>53</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=54><a style=outline:none;text-decoration:none;color:inherit href=#54>54</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=55><a style=outline:none;text-decoration:none;color:inherit href=#55>55</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=56><a style=outline:none;text-decoration:none;color:inherit href=#56>56</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=57><a style=outline:none;text-decoration:none;color:inherit href=#57>57</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=58><a style=outline:none;text-decoration:none;color:inherit href=#58>58</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=59><a style=outline:none;text-decoration:none;color:inherit href=#59>59</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=60><a style=outline:none;text-decoration:none;color:inherit href=#60>60</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=61><a style=outline:none;text-decoration:none;color:inherit href=#61>61</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=62><a style=outline:none;text-decoration:none;color:inherit href=#62>62</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=63><a style=outline:none;text-decoration:none;color:inherit href=#63>63</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=64><a style=outline:none;text-decoration:none;color:inherit href=#64>64</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=65><a style=outline:none;text-decoration:none;color:inherit href=#65>65</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=66><a style=outline:none;text-decoration:none;color:inherit href=#66>66</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=67><a style=outline:none;text-decoration:none;color:inherit href=#67>67</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=68><a style=outline:none;text-decoration:none;color:inherit href=#68>68</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=69><a style=outline:none;text-decoration:none;color:inherit href=#69>69</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=70><a style=outline:none;text-decoration:none;color:inherit href=#70>70</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=71><a style=outline:none;text-decoration:none;color:inherit href=#71>71</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=72><a style=outline:none;text-decoration:none;color:inherit href=#72>72</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=73><a style=outline:none;text-decoration:none;color:inherit href=#73>73</a>
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>std::vector&lt;std::pair&lt;poly,<span style=color:#00688b;font-weight:700>int</span>&gt; &gt; fact(poly pa){
-    <span style=color:#228b22>// Factorization pa
-</span><span style=color:#228b22></span>    <span style=color:#228b22>// Return : vector&lt;pair&lt;poly,int&gt; &gt;
-</span><span style=color:#228b22></span>    std::vector&lt;std::pair&lt;poly,<span style=color:#00688b;font-weight:700>int</span>&gt; &gt; ret;
-     
-    <span style=color:#8b008b;font-weight:700>if</span>(pa.r == <span style=color:#b452cd>1</span> and pa.an[<span style=color:#b452cd>0</span>] == <span style=color:#b452cd>0</span>){
-        fprintf(stderr, <span style=color:#cd5555>&#34;Error : Try to fact 0.</span><span style=color:#cd5555>\n</span><span style=color:#cd5555>&#34;</span>);
-        <span style=color:#8b008b;font-weight:700>return</span> ret;
-    }
-    
-    <span style=color:#00688b;font-weight:700>int</span> deg = pa.r-<span style=color:#b452cd>1</span>, p = pa.p;
-     
-    <span style=color:#00688b;font-weight:700>int</span> fst = pa.make_monic();
-    
-    <span style=color:#8b008b;font-weight:700>if</span>(fst != <span style=color:#b452cd>1</span>){
-        poly <span style=color:#008b45>poly_fst</span>(p); 
-        poly_fst.an[<span style=color:#b452cd>0</span>] = fst;
-        ret.push_back(std::pair&lt;poly,<span style=color:#00688b;font-weight:700>int</span>&gt;(fst,<span style=color:#b452cd>1</span>));
-    }
-    
-    <span style=color:#00688b;font-weight:700>int</span> gmat[<span style=color:#b452cd>1000</span>] = {<span style=color:#b452cd>0</span>}, nullset[<span style=color:#b452cd>1000</span>] = {<span style=color:#b452cd>0</span>}, nullsetcount;
-
-    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; deg;lx++){
-        poly <span style=color:#008b45>test</span>(p);
-        test.r = lx*p + <span style=color:#b452cd>1</span>, test.an[lx*p] = <span style=color:#b452cd>1</span>;
-        std::pair&lt;poly,poly&gt; getresid = test/pa;
-        <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> ly = <span style=color:#b452cd>0</span>;ly &lt; getresid.second.r;ly++)
-            gmat[ly*deg + lx] = getresid.second.an[ly];
-    }
-    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; deg;lx++)
-        gmat[lx*deg + lx] = (gmat[lx*deg + lx] + p-<span style=color:#b452cd>1</span>)%p;
-
-    nullsetcount = GetNullSpace(gmat, deg, deg, p, nullset);
-    std::vector&lt;poly&gt; prc; prc.push_back(pa);
-    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; nullsetcount;lx++){
-        std::vector&lt;poly&gt; tmp;
-        <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> ly = <span style=color:#b452cd>0</span>;ly &lt; prc.size();ly++){
-            poly hh = prc[ly];
-            poly <span style=color:#008b45>testg</span>(p); testg.r = deg;
-            <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lz = <span style=color:#b452cd>0</span>;lz &lt; deg;lz++)
-                testg.an[lz] = nullset[lx*deg + lz];
-            testg.set_r();
-            <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lz = <span style=color:#b452cd>0</span>;lz &lt; p;lz++){
-                testg.an[<span style=color:#b452cd>0</span>] = (testg.an[<span style=color:#b452cd>0</span>] + <span style=color:#b452cd>1</span>)%p;
-                poly getgcd = gcd(hh, testg);
-                
-                <span style=color:#8b008b;font-weight:700>if</span>(getgcd.r &gt; <span style=color:#b452cd>1</span>){
-                    tmp.push_back(getgcd);
-                }
-            }
-        }
-        prc = tmp;
-    }
-         
-    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; prc.size();lx++){
-        poly hh = prc[lx];
-        poly diff_hh;
-        <span style=color:#00688b;font-weight:700>int</span> nn = <span style=color:#b452cd>1</span>;
-        <span style=color:#8b008b;font-weight:700>for</span>(;;){
-            diff_hh = diff(hh);
-            <span style=color:#8b008b;font-weight:700>if</span>(not diff_hh.is_zero())
-                <span style=color:#8b008b;font-weight:700>break</span>;
-            <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; hh.r;lx+=p)
-                hh.an[lx/p] = hh.an[lx];
-            nn *= p;
-            hh.r = (hh.r - <span style=color:#b452cd>1</span>)/p + <span style=color:#b452cd>1</span>;
-        }
-        std::pair&lt;poly, poly&gt; get_pair = hh/gcd(hh, diff_hh);         
-        ret.push_back(std::pair&lt;poly, <span style=color:#00688b;font-weight:700>int</span>&gt;(get_pair.first, nn*(hh.r-<span style=color:#b452cd>1</span>)/(get_pair.first.r-<span style=color:#b452cd>1</span>)));
-    }
-
-    <span style=color:#8b008b;font-weight:700>return</span> ret; 
-}
-</code></pre></td></tr></table>
-</div>
-</div>
-<hr>
-<script src=https://utteranc.es/client.js repo=mudream4869/imgcity-comment issue-term=pathname theme=github-light crossorigin=anonymous async></script>
-</div>
-<div class=pagination>
-<a href=/posts/2014/11-03-count-on-totient-function/ class="left arrow">
-&#8592;Count on Totient Function
-</a>
-<a href=/posts/2014/12-21-c-add-python-mixed-programming/ class="right arrow">
-C和Python混和編程&#8594;
-</a>
-<a href=# class=top>Top</a>
-</div>
-</main>
-<footer>
-<span>
-&copy; <time datetime="2022-01-21 13:30:48.265210948 +0000 UTC m=+0.079733683">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.
-</span>
-</footer>
-</body>
-</html>
+<code>diff()</code> 會微分多項式</p><p>順便把<strong>Square free</strong>的分解也寫進去了，完整一點．</p><div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-1><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-1> 1</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-2><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-2> 2</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-3><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-3> 3</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-4><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-4> 4</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-5><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-5> 5</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-6><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-6> 6</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-7><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-7> 7</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-8><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-8> 8</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-9><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-9> 9</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-10><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-10>10</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-11><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-11>11</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-12><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-12>12</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-13><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-13>13</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-14><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-14>14</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-15><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-15>15</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-16><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-16>16</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-17><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-17>17</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-18><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-18>18</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-19><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-19>19</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-20><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-20>20</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-21><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-21>21</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-22><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-22>22</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-23><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-23>23</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-24><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-24>24</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-25><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-25>25</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-26><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-26>26</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-27><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-27>27</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-28><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-28>28</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-29><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-29>29</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-30><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-30>30</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-31><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-31>31</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-32><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-32>32</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-33><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-33>33</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-34><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-34>34</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-35><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-35>35</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-36><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-36>36</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-37><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-37>37</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-38><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-38>38</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-39><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-39>39</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-40><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-40>40</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-41><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-41>41</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-42><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-42>42</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-43><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-43>43</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-44><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-44>44</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-45><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-45>45</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-46><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-46>46</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-47><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-47>47</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-48><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-48>48</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-49><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-49>49</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-50><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-50>50</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-51><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-51>51</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-52><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-52>52</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-53><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-53>53</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-54><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-54>54</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-55><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-55>55</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-56><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-56>56</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-57><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-57>57</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-58><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-58>58</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-59><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-59>59</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-60><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-60>60</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-61><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-61>61</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-62><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-62>62</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-63><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-63>63</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-64><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-64>64</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-65><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-65>65</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-66><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-66>66</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-67><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-67>67</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-68><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-68>68</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-69><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-69>69</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-70><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-70>70</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-71><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-71>71</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-72><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-72>72</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-73><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-73>73</a>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span>std::vector&lt;std::pair&lt;poly,<span style=color:#00688b;font-weight:700>int</span>&gt; &gt; fact(poly pa){
+</span></span><span style=display:flex><span>    <span style=color:#228b22>// Factorization pa
+</span></span></span><span style=display:flex><span><span style=color:#228b22></span>    <span style=color:#228b22>// Return : vector&lt;pair&lt;poly,int&gt; &gt;
+</span></span></span><span style=display:flex><span><span style=color:#228b22></span>    std::vector&lt;std::pair&lt;poly,<span style=color:#00688b;font-weight:700>int</span>&gt; &gt; ret;
+</span></span><span style=display:flex><span>     
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>if</span>(pa.r == <span style=color:#b452cd>1</span> and pa.an[<span style=color:#b452cd>0</span>] == <span style=color:#b452cd>0</span>){
+</span></span><span style=display:flex><span>        fprintf(stderr, <span style=color:#cd5555>&#34;Error : Try to fact 0.</span><span style=color:#cd5555>\n</span><span style=color:#cd5555>&#34;</span>);
+</span></span><span style=display:flex><span>        <span style=color:#8b008b;font-weight:700>return</span> ret;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#00688b;font-weight:700>int</span> deg = pa.r-<span style=color:#b452cd>1</span>, p = pa.p;
+</span></span><span style=display:flex><span>     
+</span></span><span style=display:flex><span>    <span style=color:#00688b;font-weight:700>int</span> fst = pa.make_monic();
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>if</span>(fst != <span style=color:#b452cd>1</span>){
+</span></span><span style=display:flex><span>        poly <span style=color:#008b45>poly_fst</span>(p); 
+</span></span><span style=display:flex><span>        poly_fst.an[<span style=color:#b452cd>0</span>] = fst;
+</span></span><span style=display:flex><span>        ret.push_back(std::pair&lt;poly,<span style=color:#00688b;font-weight:700>int</span>&gt;(fst,<span style=color:#b452cd>1</span>));
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#00688b;font-weight:700>int</span> gmat[<span style=color:#b452cd>1000</span>] = {<span style=color:#b452cd>0</span>}, nullset[<span style=color:#b452cd>1000</span>] = {<span style=color:#b452cd>0</span>}, nullsetcount;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; deg;lx++){
+</span></span><span style=display:flex><span>        poly <span style=color:#008b45>test</span>(p);
+</span></span><span style=display:flex><span>        test.r = lx*p + <span style=color:#b452cd>1</span>, test.an[lx*p] = <span style=color:#b452cd>1</span>;
+</span></span><span style=display:flex><span>        std::pair&lt;poly,poly&gt; getresid = test/pa;
+</span></span><span style=display:flex><span>        <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> ly = <span style=color:#b452cd>0</span>;ly &lt; getresid.second.r;ly++)
+</span></span><span style=display:flex><span>            gmat[ly*deg + lx] = getresid.second.an[ly];
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; deg;lx++)
+</span></span><span style=display:flex><span>        gmat[lx*deg + lx] = (gmat[lx*deg + lx] + p-<span style=color:#b452cd>1</span>)%p;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    nullsetcount = GetNullSpace(gmat, deg, deg, p, nullset);
+</span></span><span style=display:flex><span>    std::vector&lt;poly&gt; prc; prc.push_back(pa);
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; nullsetcount;lx++){
+</span></span><span style=display:flex><span>        std::vector&lt;poly&gt; tmp;
+</span></span><span style=display:flex><span>        <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> ly = <span style=color:#b452cd>0</span>;ly &lt; prc.size();ly++){
+</span></span><span style=display:flex><span>            poly hh = prc[ly];
+</span></span><span style=display:flex><span>            poly <span style=color:#008b45>testg</span>(p); testg.r = deg;
+</span></span><span style=display:flex><span>            <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lz = <span style=color:#b452cd>0</span>;lz &lt; deg;lz++)
+</span></span><span style=display:flex><span>                testg.an[lz] = nullset[lx*deg + lz];
+</span></span><span style=display:flex><span>            testg.set_r();
+</span></span><span style=display:flex><span>            <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lz = <span style=color:#b452cd>0</span>;lz &lt; p;lz++){
+</span></span><span style=display:flex><span>                testg.an[<span style=color:#b452cd>0</span>] = (testg.an[<span style=color:#b452cd>0</span>] + <span style=color:#b452cd>1</span>)%p;
+</span></span><span style=display:flex><span>                poly getgcd = gcd(hh, testg);
+</span></span><span style=display:flex><span>                
+</span></span><span style=display:flex><span>                <span style=color:#8b008b;font-weight:700>if</span>(getgcd.r &gt; <span style=color:#b452cd>1</span>){
+</span></span><span style=display:flex><span>                    tmp.push_back(getgcd);
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        prc = tmp;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>         
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; prc.size();lx++){
+</span></span><span style=display:flex><span>        poly hh = prc[lx];
+</span></span><span style=display:flex><span>        poly diff_hh;
+</span></span><span style=display:flex><span>        <span style=color:#00688b;font-weight:700>int</span> nn = <span style=color:#b452cd>1</span>;
+</span></span><span style=display:flex><span>        <span style=color:#8b008b;font-weight:700>for</span>(;;){
+</span></span><span style=display:flex><span>            diff_hh = diff(hh);
+</span></span><span style=display:flex><span>            <span style=color:#8b008b;font-weight:700>if</span>(not diff_hh.is_zero())
+</span></span><span style=display:flex><span>                <span style=color:#8b008b;font-weight:700>break</span>;
+</span></span><span style=display:flex><span>            <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; hh.r;lx+=p)
+</span></span><span style=display:flex><span>                hh.an[lx/p] = hh.an[lx];
+</span></span><span style=display:flex><span>            nn *= p;
+</span></span><span style=display:flex><span>            hh.r = (hh.r - <span style=color:#b452cd>1</span>)/p + <span style=color:#b452cd>1</span>;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        std::pair&lt;poly, poly&gt; get_pair = hh/gcd(hh, diff_hh);         
+</span></span><span style=display:flex><span>        ret.push_back(std::pair&lt;poly, <span style=color:#00688b;font-weight:700>int</span>&gt;(get_pair.first, nn*(hh.r-<span style=color:#b452cd>1</span>)/(get_pair.first.r-<span style=color:#b452cd>1</span>)));
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>return</span> ret; 
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div><hr><script src=https://utteranc.es/client.js repo=mudream4869/imgcity-comment issue-term=pathname theme=github-light crossorigin=anonymous async></script></div><div class=pagination><a href=/posts/2014/11-03-count-on-totient-function/ class="left arrow">&#8592;Count on Totient Function</a>
+<a href=/posts/2014/12-21-c-add-python-mixed-programming/ class="right arrow">C和Python混和編程&#8594;</a>
+<a href=# class=top>Top</a></div></main><footer><span>&copy; <time datetime="2022-03-15 15:26:13.993876131 +0000 UTC m=+0.081901568">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.</span></footer></body></html>

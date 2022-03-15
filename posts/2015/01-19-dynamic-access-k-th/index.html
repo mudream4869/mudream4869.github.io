@@ -1,194 +1,100 @@
-<!doctype html><html lang=zh-tw>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<title>動態存取第k大 &#183; Imaginary City</title>
-<link rel=stylesheet href=/css/style.css>
-<link rel=stylesheet href=/css/fonts.css>
-<link rel=stylesheet href=/custom.css>
-<link rel=icon href=favicon.ico>
-<link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<link href rel=alternate type=application/rss+xml title="Imaginary City">
-<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css>
-<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js></script>
+<!doctype html><html lang=zh-tw><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>動態存取第k大 &#183; Imaginary City</title><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css><link rel=stylesheet href=/custom.css><link rel=icon href=favicon.ico><link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link href rel=alternate type=application/rss+xml title="Imaginary City"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js></script>
 <script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js onload=renderMathInElement(document.body)></script>
-<script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})})</script>
-</head>
-<body>
-<nav class=nav>
-<div class=nav-container>
-<a href=/>
-<h2 class=nav-title>Imaginary City</h2>
-</a>
-<ul>
-<li>
-<a href=/about/>
-<span>About</span>
-</a>
-</li>
-<li>
-<a href=/notes/>
-<span>Notes</span>
-</a>
-</li>
-<li>
-<a href=/posts/>
-<span>Posts</span>
-</a>
-</li>
-<li>
-<a href=/tags/>
-<span>Tags</span>
-</a>
-</li>
-</ul>
-</div>
-</nav>
-<main>
-<div class=post>
-<div class=post-info>
-<br>
-<time datetime="2015-01-19 08:00:00 +0000 UTC">January 19, 2015</time>
-</div>
-<h1 class=post-title>動態存取第k大</h1>
-<p style=text-align:center>
-<a href=/tags/%e7%a8%8b%e5%bc%8f%e6%af%94%e8%b3%bd>#程式比賽</a>
-<a href=/tags/C++>#C++</a>
-</p>
-<div class=post-line></div>
-<h2 id=動態存取第k大>動態存取第k大</h2>
-<p>動態第k大是個實在是有點麻煩的東西，因為<code>set</code>裏面並沒有提供類似的操作，像是<code>nth_element()</code>之類的東西．</p>
-<h3 id=線段樹>線段樹</h3>
-<p>假如可以離線處理，這算是一個不錯的選擇，先把資料離散化，然後按照順序排好．</p>
-<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1> 1</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2> 2</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3> 3</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4> 4</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5> 5</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6> 6</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7> 7</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8> 8</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=9><a style=outline:none;text-decoration:none;color:inherit href=#9> 9</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=10><a style=outline:none;text-decoration:none;color:inherit href=#10>10</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=11><a style=outline:none;text-decoration:none;color:inherit href=#11>11</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=12><a style=outline:none;text-decoration:none;color:inherit href=#12>12</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=13><a style=outline:none;text-decoration:none;color:inherit href=#13>13</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=14><a style=outline:none;text-decoration:none;color:inherit href=#14>14</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=15><a style=outline:none;text-decoration:none;color:inherit href=#15>15</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=16><a style=outline:none;text-decoration:none;color:inherit href=#16>16</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=17><a style=outline:none;text-decoration:none;color:inherit href=#17>17</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=18><a style=outline:none;text-decoration:none;color:inherit href=#18>18</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=19><a style=outline:none;text-decoration:none;color:inherit href=#19>19</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=20><a style=outline:none;text-decoration:none;color:inherit href=#20>20</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=21><a style=outline:none;text-decoration:none;color:inherit href=#21>21</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=22><a style=outline:none;text-decoration:none;color:inherit href=#22>22</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=23><a style=outline:none;text-decoration:none;color:inherit href=#23>23</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=24><a style=outline:none;text-decoration:none;color:inherit href=#24>24</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=25><a style=outline:none;text-decoration:none;color:inherit href=#25>25</a>
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#1e889b>#define MAX 100005
-</span><span style=color:#1e889b></span><span style=color:#00688b;font-weight:700>int</span> tree[<span style=color:#b452cd>4</span>*MAX];
-<span style=color:#00688b;font-weight:700>int</span> base;
-<span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>init</span>(<span style=color:#00688b;font-weight:700>int</span> n){
-    base = (<span style=color:#b452cd>1</span>&lt;&lt;(<span style=color:#00688b;font-weight:700>int</span>)(ceil(log2(n+<span style=color:#b452cd>2</span>)))) -<span style=color:#b452cd>1</span>;
-    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; <span style=color:#b452cd>4</span>*MAX;lx++)
-        tree[lx] = <span style=color:#b452cd>0</span>;
-    <span style=color:#8b008b;font-weight:700>return</span>;
-}
-<span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>touch</span>(<span style=color:#00688b;font-weight:700>int</span> a){
-    <span style=color:#00688b;font-weight:700>int</span> prc = a + base + <span style=color:#b452cd>2</span>;
-    tree[prc]++;
-    <span style=color:#8b008b;font-weight:700>for</span>(prc&gt;&gt;=<span style=color:#b452cd>1</span>;prc;prc&gt;&gt;=<span style=color:#b452cd>1</span>)
-        tree[prc] = tree[prc*<span style=color:#b452cd>2</span>] + tree[prc*<span style=color:#b452cd>2</span> + <span style=color:#b452cd>1</span>];
-    <span style=color:#8b008b;font-weight:700>return</span>;
-}
-<span style=color:#00688b;font-weight:700>int</span> <span style=color:#008b45>qry</span>(<span style=color:#00688b;font-weight:700>int</span> a, <span style=color:#00688b;font-weight:700>int</span> b){
-    <span style=color:#00688b;font-weight:700>int</span> ret = <span style=color:#b452cd>0</span>;
-    <span style=color:#8b008b;font-weight:700>for</span>(a += base + <span style=color:#b452cd>1</span>, b += base+<span style=color:#b452cd>3</span>;
-        a^b^<span style=color:#b452cd>1</span>;a&gt;&gt;=<span style=color:#b452cd>1</span>, b&gt;&gt;=<span style=color:#b452cd>1</span>){
-        <span style=color:#8b008b;font-weight:700>if</span>(~a&amp;<span style=color:#b452cd>1</span>) ret += tree[a^<span style=color:#b452cd>1</span>];
-        <span style=color:#8b008b;font-weight:700>if</span>(b&amp;<span style=color:#b452cd>1</span>) ret += tree[b^<span style=color:#b452cd>1</span>];
-    }
-    <span style=color:#8b008b;font-weight:700>return</span> ret;
-}
-</code></pre></td></tr></table>
-</div>
-</div><p>如此<code>qry</code>函數便可以知道 $[a, b]$ 之間有多少的元素，進而用二分搜實作出<code>kth_element</code></p>
-<h3 id=gnu-pbds-tree>gnu pbds tree</h3>
-<p>今天逛codeforce看到<a href=http://codeforces.com/blog/entry/15729>Codeforce:Algorithm Gym :: Data structures</a></p>
-<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1> 1</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2> 2</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3> 3</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4> 4</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5> 5</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=6><a style=outline:none;text-decoration:none;color:inherit href=#6> 6</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=7><a style=outline:none;text-decoration:none;color:inherit href=#7> 7</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=8><a style=outline:none;text-decoration:none;color:inherit href=#8> 8</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=9><a style=outline:none;text-decoration:none;color:inherit href=#9> 9</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=10><a style=outline:none;text-decoration:none;color:inherit href=#10>10</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=11><a style=outline:none;text-decoration:none;color:inherit href=#11>11</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=12><a style=outline:none;text-decoration:none;color:inherit href=#12>12</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=13><a style=outline:none;text-decoration:none;color:inherit href=#13>13</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=14><a style=outline:none;text-decoration:none;color:inherit href=#14>14</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=15><a style=outline:none;text-decoration:none;color:inherit href=#15>15</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=16><a style=outline:none;text-decoration:none;color:inherit href=#16>16</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=17><a style=outline:none;text-decoration:none;color:inherit href=#17>17</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=18><a style=outline:none;text-decoration:none;color:inherit href=#18>18</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=19><a style=outline:none;text-decoration:none;color:inherit href=#19>19</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=20><a style=outline:none;text-decoration:none;color:inherit href=#20>20</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=21><a style=outline:none;text-decoration:none;color:inherit href=#21>21</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=22><a style=outline:none;text-decoration:none;color:inherit href=#22>22</a>
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#1e889b>#include</span><span style=color:#1e889b>&lt;bits/stdc++.h&gt;</span><span style=color:#1e889b>
-</span><span style=color:#1e889b>#include</span><span style=color:#1e889b>&lt;ext/pb_ds/assoc_container.hpp&gt;</span><span style=color:#1e889b>
-</span><span style=color:#1e889b>#include</span><span style=color:#1e889b>&lt;ext/pb_ds/tree_policy.hpp&gt;</span><span style=color:#1e889b>
-</span><span style=color:#1e889b></span><span style=color:#8b008b;font-weight:700>using</span> <span style=color:#8b008b;font-weight:700>namespace</span> __gnu_pbds;
-<span style=color:#8b008b;font-weight:700>using</span> <span style=color:#8b008b;font-weight:700>namespace</span> std;
-
-<span style=color:#8b008b;font-weight:700>template</span> &lt;<span style=color:#8b008b;font-weight:700>typename</span> T&gt;
-<span style=color:#8b008b;font-weight:700>using</span> ordered_set = tree&lt;T, null_type, less&lt;T&gt;, rb_tree_tag, 
-    tree_order_statistics_node_update&gt;;
-
-<span style=color:#00688b;font-weight:700>int</span> <span style=color:#008b45>main</span>(){
-	  ordered_set&lt;<span style=color:#00688b;font-weight:700>int</span>&gt;  s;
-	  s.insert(<span style=color:#b452cd>1</span>); 
-	  s.insert(<span style=color:#b452cd>3</span>);
-	  cout &lt;&lt; s.order_of_key(<span style=color:#b452cd>2</span>) &lt;&lt; endl;
-      <span style=color:#228b22>// the number of elements in the s less than 2
-</span><span style=color:#228b22></span>	  
-      cout &lt;&lt; *s.find_by_order(<span style=color:#b452cd>0</span>) &lt;&lt; endl;
-      <span style=color:#228b22>// print the 0-th smallest number in s(0-based)
-</span><span style=color:#228b22></span>
-    <span style=color:#8b008b;font-weight:700>return</span> <span style=color:#b452cd>0</span>;
-}
-</code></pre></td></tr></table>
-</div>
-</div>
-<hr>
-<script src=https://utteranc.es/client.js repo=mudream4869/imgcity-comment issue-term=pathname theme=github-light crossorigin=anonymous async></script>
-</div>
-<div class=pagination>
-<a href=/posts/2015/01-13-simple-openal-coding/ class="left arrow">
-&#8592;OpenAL 簡易教學
-</a>
-<a href=/posts/2015/01-25-crpg-stage2/ class="right arrow">
-CRPG 第二階段完成&#8594;
-</a>
-<a href=# class=top>Top</a>
-</div>
-</main>
-<footer>
-<span>
-&copy; <time datetime="2022-01-21 13:30:48.3027513 +0000 UTC m=+0.117273935">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.
-</span>
-</footer>
-</body>
-</html>
+<script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})})</script></head><body><nav class=nav><div class=nav-container><a href=/><h2 class=nav-title>Imaginary City</h2></a><ul><li><a href=/about/><span>About</span></a></li><li><a href=/notes/><span>Notes</span></a></li><li><a href=/posts/><span>Posts</span></a></li><li><a href=/tags/><span>Tags</span></a></li></ul></div></nav><main><div class=post><div class=post-info><br><time datetime="2015-01-19 08:00:00 +0000 UTC">January 19, 2015</time></div><h1 class=post-title>動態存取第k大</h1><p style=text-align:center><a href=/tags/%e7%a8%8b%e5%bc%8f%e6%af%94%e8%b3%bd>#程式比賽</a>
+<a href=/tags/C++>#C++</a></p><div class=post-line></div><h2 id=動態存取第k大>動態存取第k大</h2><p>動態第k大是個實在是有點麻煩的東西，因為<code>set</code>裏面並沒有提供類似的操作，像是<code>nth_element()</code>之類的東西．</p><h3 id=線段樹>線段樹</h3><p>假如可以離線處理，這算是一個不錯的選擇，先把資料離散化，然後按照順序排好．</p><div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-1><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-1> 1</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-2><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-2> 2</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-3><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-3> 3</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-4><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-4> 4</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-5><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-5> 5</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-6><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-6> 6</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-7><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-7> 7</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-8><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-8> 8</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-9><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-9> 9</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-10><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-10>10</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-11><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-11>11</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-12><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-12>12</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-13><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-13>13</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-14><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-14>14</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-15><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-15>15</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-16><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-16>16</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-17><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-17>17</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-18><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-18>18</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-19><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-19>19</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-20><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-20>20</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-21><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-21>21</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-22><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-22>22</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-23><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-23>23</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-24><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-24>24</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-25><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-25>25</a>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#1e889b>#define MAX 100005
+</span></span></span><span style=display:flex><span><span style=color:#1e889b></span><span style=color:#00688b;font-weight:700>int</span> tree[<span style=color:#b452cd>4</span>*MAX];
+</span></span><span style=display:flex><span><span style=color:#00688b;font-weight:700>int</span> base;
+</span></span><span style=display:flex><span><span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>init</span>(<span style=color:#00688b;font-weight:700>int</span> n){
+</span></span><span style=display:flex><span>    base = (<span style=color:#b452cd>1</span>&lt;&lt;(<span style=color:#00688b;font-weight:700>int</span>)(ceil(log2(n+<span style=color:#b452cd>2</span>)))) -<span style=color:#b452cd>1</span>;
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>for</span>(<span style=color:#00688b;font-weight:700>int</span> lx = <span style=color:#b452cd>0</span>;lx &lt; <span style=color:#b452cd>4</span>*MAX;lx++)
+</span></span><span style=display:flex><span>        tree[lx] = <span style=color:#b452cd>0</span>;
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>return</span>;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#00688b;font-weight:700>void</span> <span style=color:#008b45>touch</span>(<span style=color:#00688b;font-weight:700>int</span> a){
+</span></span><span style=display:flex><span>    <span style=color:#00688b;font-weight:700>int</span> prc = a + base + <span style=color:#b452cd>2</span>;
+</span></span><span style=display:flex><span>    tree[prc]++;
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>for</span>(prc&gt;&gt;=<span style=color:#b452cd>1</span>;prc;prc&gt;&gt;=<span style=color:#b452cd>1</span>)
+</span></span><span style=display:flex><span>        tree[prc] = tree[prc*<span style=color:#b452cd>2</span>] + tree[prc*<span style=color:#b452cd>2</span> + <span style=color:#b452cd>1</span>];
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>return</span>;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#00688b;font-weight:700>int</span> <span style=color:#008b45>qry</span>(<span style=color:#00688b;font-weight:700>int</span> a, <span style=color:#00688b;font-weight:700>int</span> b){
+</span></span><span style=display:flex><span>    <span style=color:#00688b;font-weight:700>int</span> ret = <span style=color:#b452cd>0</span>;
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>for</span>(a += base + <span style=color:#b452cd>1</span>, b += base+<span style=color:#b452cd>3</span>;
+</span></span><span style=display:flex><span>        a^b^<span style=color:#b452cd>1</span>;a&gt;&gt;=<span style=color:#b452cd>1</span>, b&gt;&gt;=<span style=color:#b452cd>1</span>){
+</span></span><span style=display:flex><span>        <span style=color:#8b008b;font-weight:700>if</span>(~a&amp;<span style=color:#b452cd>1</span>) ret += tree[a^<span style=color:#b452cd>1</span>];
+</span></span><span style=display:flex><span>        <span style=color:#8b008b;font-weight:700>if</span>(b&amp;<span style=color:#b452cd>1</span>) ret += tree[b^<span style=color:#b452cd>1</span>];
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>return</span> ret;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div><p>如此<code>qry</code>函數便可以知道 $[a, b]$ 之間有多少的元素，進而用二分搜實作出<code>kth_element</code></p><h3 id=gnu-pbds-tree>gnu pbds tree</h3><p>今天逛codeforce看到<a href=http://codeforces.com/blog/entry/15729>Codeforce:Algorithm Gym :: Data structures</a></p><div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-1><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-1> 1</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-2><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-2> 2</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-3><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-3> 3</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-4><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-4> 4</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-5><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-5> 5</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-6><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-6> 6</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-7><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-7> 7</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-8><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-8> 8</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-9><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-9> 9</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-10><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-10>10</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-11><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-11>11</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-12><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-12>12</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-13><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-13>13</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-14><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-14>14</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-15><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-15>15</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-16><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-16>16</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-17><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-17>17</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-18><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-18>18</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-19><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-19>19</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-20><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-20>20</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-21><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-21>21</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-22><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-22>22</a>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#1e889b>#include</span><span style=color:#1e889b>&lt;bits/stdc++.h&gt;</span><span style=color:#1e889b>
+</span></span></span><span style=display:flex><span><span style=color:#1e889b>#include</span><span style=color:#1e889b>&lt;ext/pb_ds/assoc_container.hpp&gt;</span><span style=color:#1e889b>
+</span></span></span><span style=display:flex><span><span style=color:#1e889b>#include</span><span style=color:#1e889b>&lt;ext/pb_ds/tree_policy.hpp&gt;</span><span style=color:#1e889b>
+</span></span></span><span style=display:flex><span><span style=color:#1e889b></span><span style=color:#8b008b;font-weight:700>using</span> <span style=color:#8b008b;font-weight:700>namespace</span> __gnu_pbds;
+</span></span><span style=display:flex><span><span style=color:#8b008b;font-weight:700>using</span> <span style=color:#8b008b;font-weight:700>namespace</span> std;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#8b008b;font-weight:700>template</span> &lt;<span style=color:#8b008b;font-weight:700>typename</span> T&gt;
+</span></span><span style=display:flex><span><span style=color:#8b008b;font-weight:700>using</span> ordered_set = tree&lt;T, null_type, less&lt;T&gt;, rb_tree_tag, 
+</span></span><span style=display:flex><span>    tree_order_statistics_node_update&gt;;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#00688b;font-weight:700>int</span> <span style=color:#008b45>main</span>(){
+</span></span><span style=display:flex><span>	  ordered_set&lt;<span style=color:#00688b;font-weight:700>int</span>&gt;  s;
+</span></span><span style=display:flex><span>	  s.insert(<span style=color:#b452cd>1</span>); 
+</span></span><span style=display:flex><span>	  s.insert(<span style=color:#b452cd>3</span>);
+</span></span><span style=display:flex><span>	  cout &lt;&lt; s.order_of_key(<span style=color:#b452cd>2</span>) &lt;&lt; endl;
+</span></span><span style=display:flex><span>      <span style=color:#228b22>// the number of elements in the s less than 2
+</span></span></span><span style=display:flex><span><span style=color:#228b22></span>	  
+</span></span><span style=display:flex><span>      cout &lt;&lt; *s.find_by_order(<span style=color:#b452cd>0</span>) &lt;&lt; endl;
+</span></span><span style=display:flex><span>      <span style=color:#228b22>// print the 0-th smallest number in s(0-based)
+</span></span></span><span style=display:flex><span><span style=color:#228b22></span>
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>return</span> <span style=color:#b452cd>0</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div><hr><script src=https://utteranc.es/client.js repo=mudream4869/imgcity-comment issue-term=pathname theme=github-light crossorigin=anonymous async></script></div><div class=pagination><a href=/posts/2015/01-13-simple-openal-coding/ class="left arrow">&#8592;OpenAL 簡易教學</a>
+<a href=/posts/2015/01-25-crpg-stage2/ class="right arrow">CRPG 第二階段完成&#8594;</a>
+<a href=# class=top>Top</a></div></main><footer><span>&copy; <time datetime="2022-03-15 15:26:14.010131224 +0000 UTC m=+0.098156661">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.</span></footer></body></html>

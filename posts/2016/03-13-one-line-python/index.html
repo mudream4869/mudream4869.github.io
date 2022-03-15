@@ -1,180 +1,31 @@
-<!doctype html><html lang=zh-tw>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<title>一行的Python3 &#183; Imaginary City</title>
-<link rel=stylesheet href=/css/style.css>
-<link rel=stylesheet href=/css/fonts.css>
-<link rel=stylesheet href=/custom.css>
-<link rel=icon href=favicon.ico>
-<link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<link href rel=alternate type=application/rss+xml title="Imaginary City">
-</head>
-<body>
-<nav class=nav>
-<div class=nav-container>
-<a href=/>
-<h2 class=nav-title>Imaginary City</h2>
-</a>
-<ul>
-<li>
-<a href=/about/>
-<span>About</span>
-</a>
-</li>
-<li>
-<a href=/notes/>
-<span>Notes</span>
-</a>
-</li>
-<li>
-<a href=/posts/>
-<span>Posts</span>
-</a>
-</li>
-<li>
-<a href=/tags/>
-<span>Tags</span>
-</a>
-</li>
-</ul>
-</div>
-</nav>
-<main>
-<div class=post>
-<div class=post-info>
-<br>
-<time datetime="2016-03-13 08:00:00 +0000 UTC">March 13, 2016</time>
-</div>
-<h1 class=post-title>一行的Python3</h1>
-<p style=text-align:center>
-<a href=/tags/Python>#Python</a>
-</p>
-<div class=post-line></div>
-<p>因為某些原因，最近開始喜歡上<strong>一行Python解問題</strong>了！</p>
-<h2 id=ab-problem>A+B problem</h2>
-<p>事情的開端就是這題，一開始我突然想到，直接用一行就好了</p>
-<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#658b00>print</span>(<span style=color:#658b00>int</span>(<span style=color:#658b00>input</span>()) + <span style=color:#658b00>int</span>(<span style=color:#658b00>input</span>()))
-</code></pre></td></tr></table>
-</div>
-</div><p>由於input順序不需考量，所以上面這樣是好的，然後就突發奇想想把題目都盡量壓在一行內解決。像是給3個數字，然後由大印到小也是很輕鬆。</p>
-<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#658b00>print</span>([<span style=color:#658b00>int</span>(<span style=color:#658b00>input</span>()), <span style=color:#658b00>int</span>(<span style=color:#658b00>input</span>()), <span style=color:#658b00>int</span>(<span style=color:#658b00>input</span>())].sorted(<span style=color:#658b00>reversed</span> = <span style=color:#8b008b;font-weight:700>True</span>))
-</code></pre></td></tr></table>
-</div>
-</div><p>不過，我很快的就遇到一個小難題：</p>
-<blockquote>
-<p>給三個數字，判斷是否有按照由小到大</p>
-</blockquote>
-<p>這比較麻煩的地方是</p>
-<ul>
-<li>元素輸入順序需要是正確的</li>
-<li>需要重複用到輸入的陣列（命名）</li>
-</ul>
-<p>第一個想了一下，事實上不是什麼問題，只需要用<code>map(int, map(input, [""]*3))</code>
-就可以做到了，主要是第二個，需要把取到的陣列存起來，然後做下面的比較</p>
-<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#8b008b;font-weight:700>if</span> x[<span style=color:#b452cd>0</span>] &lt; x[<span style=color:#b452cd>1</span>] &lt; x[<span style=color:#b452cd>2</span>] :
-</code></pre></td></tr></table>
-</div>
-</div><p>假如只是if的話那還好，我們可以寫</p>
-<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>[<span style=color:#cd5555>&#34;No&#34;</span>, <span style=color:#cd5555>&#34;Yes&#34;</span>][x[<span style=color:#b452cd>0</span>] &lt; x[<span style=color:#b452cd>1</span>] &lt; x[<span style=color:#b452cd>2</span>]]
-</code></pre></td></tr></table>
-</div>
-</div><p>也就是說，我們需要暫時幫輸入字串取名字</p>
-<h2 id=lambda>lambda</h2>
-<p>之後，我想起<code>python</code>裡面的Lambda可以做到，用lambda讓輸入陣列暫時有名稱</p>
-<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#658b00>print</span>((<span style=color:#8b008b;font-weight:700>lambda</span> x : [<span style=color:#cd5555>&#34;No&#34;</span>, <span style=color:#cd5555>&#34;Yes&#34;</span>][x[<span style=color:#b452cd>0</span>] &lt; x[<span style=color:#b452cd>1</span>] &lt; x[<span style=color:#b452cd>2</span>]])(...))
-</code></pre></td></tr></table>
-</div>
-</div><p>這讓我爽殺題殺了一陣子，可是當我遇到一個問題時卻又卡住了</p>
-<h2 id=3n1-problem>3n+1 Problem</h2>
-<p>3n+1問題需要用到<code>while</code>迴圈</p>
-<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>2</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=3><a style=outline:none;text-decoration:none;color:inherit href=#3>3</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=4><a style=outline:none;text-decoration:none;color:inherit href=#4>4</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=5><a style=outline:none;text-decoration:none;color:inherit href=#5>5</a>
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>step = <span style=color:#b452cd>0</span>
-<span style=color:#8b008b;font-weight:700>while</span> n &gt; <span style=color:#b452cd>1</span>:
-    <span style=color:#8b008b;font-weight:700>if</span> n&amp;<span style=color:#b452cd>1</span> : n &gt;&gt;= <span style=color:#b452cd>1</span>
-    <span style=color:#8b008b;font-weight:700>else</span> : n = <span style=color:#b452cd>3</span>*n + <span style=color:#b452cd>1</span>
-    step += <span style=color:#b452cd>1</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>改成遞迴後，我們面臨到：我們需要幫遞迴函數取名字</p>
-<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=2><a style=outline:none;text-decoration:none;color:inherit href=#2>2</a>
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>f = <span style=color:#8b008b;font-weight:700>lambda</span> x : f([x&gt;&gt;<span style=color:#b452cd>1</span>, <span style=color:#b452cd>3</span>*n+<span style=color:#b452cd>1</span>][x&amp;<span style=color:#b452cd>1</span>]) + <span style=color:#b452cd>1</span> <span style=color:#8b008b;font-weight:700>if</span> x &gt; <span style=color:#b452cd>1</span> <span style=color:#8b008b;font-weight:700>else</span> <span style=color:#b452cd>0</span>
-<span style=color:#658b00>print</span>(f(<span style=color:#658b00>int</span>(<span style=color:#658b00>input</span>())))
-</code></pre></td></tr></table>
-</div>
-</div><p>可是，這就需要用到兩行了！</p>
-<h2 id=y-combinator>Y combinator</h2>
-<p>我們可以把<code>f = lambda x : ...f...</code>改成
-<code>lambda f : lambda x : ... f ...</code></p>
-<p>所以現在問題是給一個g，求g的不動點(g(x) = x，要把x挖出來)，在網路上翻了一下，發現Y combinator可以做到！</p>
-<p><a href=https://rosettacode.org/wiki/Y_combinator#Python>Y combinator</a></p>
-<p>所以可以直接這樣寫：</p>
-<div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=1><a style=outline:none;text-decoration:none;color:inherit href=#1>1</a>
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#658b00>print</span>(((<span style=color:#8b008b;font-weight:700>lambda</span> f: (<span style=color:#8b008b;font-weight:700>lambda</span> x: x(x))(<span style=color:#8b008b;font-weight:700>lambda</span> y: f(<span style=color:#8b008b;font-weight:700>lambda</span> *args: y(y)(*args))))(<span style=color:#8b008b;font-weight:700>lambda</span> f : <span style=color:#8b008b;font-weight:700>lambda</span> x : f([x&gt;&gt;<span style=color:#b452cd>1</span>, <span style=color:#b452cd>3</span>*n+<span style=color:#b452cd>1</span>][x&amp;<span style=color:#b452cd>1</span>]) + <span style=color:#b452cd>1</span> <span style=color:#8b008b;font-weight:700>if</span> x &gt; <span style=color:#b452cd>1</span> <span style=color:#8b008b;font-weight:700>else</span> <span style=color:#b452cd>0</span>))(<span style=color:#658b00>int</span>(<span style=color:#658b00>input</span>()))
-</code></pre></td></tr></table>
-</div>
-</div>
-<hr>
-<script src=https://utteranc.es/client.js repo=mudream4869/imgcity-comment issue-term=pathname theme=github-light crossorigin=anonymous async></script>
-</div>
-<div class=pagination>
-<a href=/posts/2015/12-30-java-call-c-functions/ class="left arrow">
-&#8592;Java 呼叫 c++ 函數
-</a>
-<a href=/posts/2017/01-25-get-driver-license/ class="right arrow">
-考駕照&#8594;
-</a>
-<a href=# class=top>Top</a>
-</div>
-</main>
-<footer>
-<span>
-&copy; <time datetime="2022-01-21 13:30:48.374303692 +0000 UTC m=+0.188826327">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.
-</span>
-</footer>
-</body>
-</html>
+<!doctype html><html lang=zh-tw><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>一行的Python3 &#183; Imaginary City</title><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css><link rel=stylesheet href=/custom.css><link rel=icon href=favicon.ico><link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link href rel=alternate type=application/rss+xml title="Imaginary City"></head><body><nav class=nav><div class=nav-container><a href=/><h2 class=nav-title>Imaginary City</h2></a><ul><li><a href=/about/><span>About</span></a></li><li><a href=/notes/><span>Notes</span></a></li><li><a href=/posts/><span>Posts</span></a></li><li><a href=/tags/><span>Tags</span></a></li></ul></div></nav><main><div class=post><div class=post-info><br><time datetime="2016-03-13 08:00:00 +0000 UTC">March 13, 2016</time></div><h1 class=post-title>一行的Python3</h1><p style=text-align:center><a href=/tags/Python>#Python</a></p><div class=post-line></div><p>因為某些原因，最近開始喜歡上<strong>一行Python解問題</strong>了！</p><h2 id=ab-problem>A+B problem</h2><p>事情的開端就是這題，一開始我突然想到，直接用一行就好了</p><div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-0-1><a style=outline:none;text-decoration:none;color:inherit href=#hl-0-1>1</a>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#658b00>print</span>(<span style=color:#658b00>int</span>(<span style=color:#658b00>input</span>()) + <span style=color:#658b00>int</span>(<span style=color:#658b00>input</span>()))
+</span></span></code></pre></td></tr></table></div></div><p>由於input順序不需考量，所以上面這樣是好的，然後就突發奇想想把題目都盡量壓在一行內解決。像是給3個數字，然後由大印到小也是很輕鬆。</p><div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-1-1><a style=outline:none;text-decoration:none;color:inherit href=#hl-1-1>1</a>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#658b00>print</span>([<span style=color:#658b00>int</span>(<span style=color:#658b00>input</span>()), <span style=color:#658b00>int</span>(<span style=color:#658b00>input</span>()), <span style=color:#658b00>int</span>(<span style=color:#658b00>input</span>())].sorted(<span style=color:#658b00>reversed</span> = <span style=color:#8b008b;font-weight:700>True</span>))
+</span></span></code></pre></td></tr></table></div></div><p>不過，我很快的就遇到一個小難題：</p><blockquote><p>給三個數字，判斷是否有按照由小到大</p></blockquote><p>這比較麻煩的地方是</p><ul><li>元素輸入順序需要是正確的</li><li>需要重複用到輸入的陣列（命名）</li></ul><p>第一個想了一下，事實上不是什麼問題，只需要用<code>map(int, map(input, [""]*3))</code>
+就可以做到了，主要是第二個，需要把取到的陣列存起來，然後做下面的比較</p><div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-2-1><a style=outline:none;text-decoration:none;color:inherit href=#hl-2-1>1</a>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#8b008b;font-weight:700>if</span> x[<span style=color:#b452cd>0</span>] &lt; x[<span style=color:#b452cd>1</span>] &lt; x[<span style=color:#b452cd>2</span>] :
+</span></span></code></pre></td></tr></table></div></div><p>假如只是if的話那還好，我們可以寫</p><div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-3-1><a style=outline:none;text-decoration:none;color:inherit href=#hl-3-1>1</a>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span>[<span style=color:#cd5555>&#34;No&#34;</span>, <span style=color:#cd5555>&#34;Yes&#34;</span>][x[<span style=color:#b452cd>0</span>] &lt; x[<span style=color:#b452cd>1</span>] &lt; x[<span style=color:#b452cd>2</span>]]
+</span></span></code></pre></td></tr></table></div></div><p>也就是說，我們需要暫時幫輸入字串取名字</p><h2 id=lambda>lambda</h2><p>之後，我想起<code>python</code>裡面的Lambda可以做到，用lambda讓輸入陣列暫時有名稱</p><div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-4-1><a style=outline:none;text-decoration:none;color:inherit href=#hl-4-1>1</a>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#658b00>print</span>((<span style=color:#8b008b;font-weight:700>lambda</span> x : [<span style=color:#cd5555>&#34;No&#34;</span>, <span style=color:#cd5555>&#34;Yes&#34;</span>][x[<span style=color:#b452cd>0</span>] &lt; x[<span style=color:#b452cd>1</span>] &lt; x[<span style=color:#b452cd>2</span>]])(...))
+</span></span></code></pre></td></tr></table></div></div><p>這讓我爽殺題殺了一陣子，可是當我遇到一個問題時卻又卡住了</p><h2 id=3n1-problem>3n+1 Problem</h2><p>3n+1問題需要用到<code>while</code>迴圈</p><div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-5-1><a style=outline:none;text-decoration:none;color:inherit href=#hl-5-1>1</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-5-2><a style=outline:none;text-decoration:none;color:inherit href=#hl-5-2>2</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-5-3><a style=outline:none;text-decoration:none;color:inherit href=#hl-5-3>3</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-5-4><a style=outline:none;text-decoration:none;color:inherit href=#hl-5-4>4</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-5-5><a style=outline:none;text-decoration:none;color:inherit href=#hl-5-5>5</a>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span>step = <span style=color:#b452cd>0</span>
+</span></span><span style=display:flex><span><span style=color:#8b008b;font-weight:700>while</span> n &gt; <span style=color:#b452cd>1</span>:
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>if</span> n&amp;<span style=color:#b452cd>1</span> : n &gt;&gt;= <span style=color:#b452cd>1</span>
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>else</span> : n = <span style=color:#b452cd>3</span>*n + <span style=color:#b452cd>1</span>
+</span></span><span style=display:flex><span>    step += <span style=color:#b452cd>1</span>
+</span></span></code></pre></td></tr></table></div></div><p>改成遞迴後，我們面臨到：我們需要幫遞迴函數取名字</p><div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-6-1><a style=outline:none;text-decoration:none;color:inherit href=#hl-6-1>1</a>
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-6-2><a style=outline:none;text-decoration:none;color:inherit href=#hl-6-2>2</a>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span>f = <span style=color:#8b008b;font-weight:700>lambda</span> x : f([x&gt;&gt;<span style=color:#b452cd>1</span>, <span style=color:#b452cd>3</span>*n+<span style=color:#b452cd>1</span>][x&amp;<span style=color:#b452cd>1</span>]) + <span style=color:#b452cd>1</span> <span style=color:#8b008b;font-weight:700>if</span> x &gt; <span style=color:#b452cd>1</span> <span style=color:#8b008b;font-weight:700>else</span> <span style=color:#b452cd>0</span>
+</span></span><span style=display:flex><span><span style=color:#658b00>print</span>(f(<span style=color:#658b00>int</span>(<span style=color:#658b00>input</span>())))
+</span></span></code></pre></td></tr></table></div></div><p>可是，這就需要用到兩行了！</p><h2 id=y-combinator>Y combinator</h2><p>我們可以把<code>f = lambda x : ...f...</code>改成
+<code>lambda f : lambda x : ... f ...</code></p><p>所以現在問題是給一個g，求g的不動點(g(x) = x，要把x挖出來)，在網路上翻了一下，發現Y combinator可以做到！</p><p><a href=https://rosettacode.org/wiki/Y_combinator#Python>Y combinator</a></p><p>所以可以直接這樣寫：</p><div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-7-1><a style=outline:none;text-decoration:none;color:inherit href=#hl-7-1>1</a>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#658b00>print</span>(((<span style=color:#8b008b;font-weight:700>lambda</span> f: (<span style=color:#8b008b;font-weight:700>lambda</span> x: x(x))(<span style=color:#8b008b;font-weight:700>lambda</span> y: f(<span style=color:#8b008b;font-weight:700>lambda</span> *args: y(y)(*args))))(<span style=color:#8b008b;font-weight:700>lambda</span> f : <span style=color:#8b008b;font-weight:700>lambda</span> x : f([x&gt;&gt;<span style=color:#b452cd>1</span>, <span style=color:#b452cd>3</span>*n+<span style=color:#b452cd>1</span>][x&amp;<span style=color:#b452cd>1</span>]) + <span style=color:#b452cd>1</span> <span style=color:#8b008b;font-weight:700>if</span> x &gt; <span style=color:#b452cd>1</span> <span style=color:#8b008b;font-weight:700>else</span> <span style=color:#b452cd>0</span>))(<span style=color:#658b00>int</span>(<span style=color:#658b00>input</span>()))
+</span></span></code></pre></td></tr></table></div></div><hr><script src=https://utteranc.es/client.js repo=mudream4869/imgcity-comment issue-term=pathname theme=github-light crossorigin=anonymous async></script></div><div class=pagination><a href=/posts/2015/12-30-java-call-c-functions/ class="left arrow">&#8592;Java 呼叫 c++ 函數</a>
+<a href=/posts/2017/01-25-get-driver-license/ class="right arrow">考駕照&#8594;</a>
+<a href=# class=top>Top</a></div></main><footer><span>&copy; <time datetime="2022-03-15 15:26:14.070776071 +0000 UTC m=+0.158801508">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.</span></footer></body></html>
