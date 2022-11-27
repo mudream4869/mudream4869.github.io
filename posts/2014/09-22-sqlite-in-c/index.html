@@ -33,22 +33,22 @@
 </span></span><span style=display:flex><span>    sqlite3* db;
 </span></span><span style=display:flex><span>    <span style=color:#00688b;font-weight:700>char</span>* errmsg = <span style=color:#658b00>NULL</span>; 
 </span></span><span style=display:flex><span>    <span style=color:#00688b;font-weight:700>char</span>** result;
-</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>if</span>(sqlite3_open_v2(<span style=color:#cd5555>&#34;main.db&#34;</span>, &amp;db, 
+</span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>if</span>(<span style=color:#008b45>sqlite3_open_v2</span>(<span style=color:#cd5555>&#34;main.db&#34;</span>, &amp;db, 
 </span></span><span style=display:flex><span>                       SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, <span style=color:#658b00>NULL</span>)){
-</span></span><span style=display:flex><span>        printf(<span style=color:#cd5555>&#34;error!</span><span style=color:#cd5555>\n</span><span style=color:#cd5555>&#34;</span>);
+</span></span><span style=display:flex><span>        <span style=color:#008b45>printf</span>(<span style=color:#cd5555>&#34;error!</span><span style=color:#cd5555>\n</span><span style=color:#cd5555>&#34;</span>);
 </span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    sqlite3_exec(db, <span style=color:#cd5555>&#34;CREATE TABLE tbtest(pid int, ptitle char(50))&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#008b45>sqlite3_exec</span>(db, <span style=color:#cd5555>&#34;CREATE TABLE tbtest(pid int, ptitle char(50))&#34;</span>,
 </span></span><span style=display:flex><span>        <span style=color:#b452cd>0</span>, <span style=color:#b452cd>0</span>, &amp;errmsg);
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    sqlite3_exec(db, <span style=color:#cd5555>&#34;INSERT INTO (pid, ptitle) VALUES (1, &#39;test1&#39;)&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#008b45>sqlite3_exec</span>(db, <span style=color:#cd5555>&#34;INSERT INTO (pid, ptitle) VALUES (1, &#39;test1&#39;)&#34;</span>,
 </span></span><span style=display:flex><span>        <span style=color:#b452cd>0</span>, <span style=color:#b452cd>0</span>, &amp;errmsg);
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    printf(<span style=color:#cd5555>&#34;%lld</span><span style=color:#cd5555>\n</span><span style=color:#cd5555>&#34;</span>, sqlite3_last_insert_rowid(db));
-</span></span><span style=display:flex><span>    sqlite3_close(db);
+</span></span><span style=display:flex><span>    <span style=color:#008b45>printf</span>(<span style=color:#cd5555>&#34;%lld</span><span style=color:#cd5555>\n</span><span style=color:#cd5555>&#34;</span>, <span style=color:#008b45>sqlite3_last_insert_rowid</span>(db));
+</span></span><span style=display:flex><span>    <span style=color:#008b45>sqlite3_close</span>(db);
 </span></span><span style=display:flex><span>    <span style=color:#8b008b;font-weight:700>return</span> <span style=color:#b452cd>0</span>;
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></td></tr></table></div></div><p>注意：
 要編譯程式時必須link sqlite3</p><div class=highlight><div style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f" id=hl-2-1><a style=outline:none;text-decoration:none;color:inherit href=#hl-2-1>1</a>
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>gcc test.c -lsqlite3 -o test
 </span></span></code></pre></td></tr></table></div></div><p>在開發時，可以搭配<code>sqliteman</code> GUI界面 。</p><hr><script src=https://utteranc.es/client.js repo=mudream4869/imgcity-comment issue-term=pathname theme=github-light crossorigin=anonymous async></script></div><div class=pagination><a href=/posts/2014/11-01-my-first-online-judge/ class="right arrow">我的第一個Online Judge&#8594;</a>
-<a href=# class=top>Top</a></div></main><footer><span>&copy; <time datetime="2022-11-24 14:24:07.347069874 +0000 UTC m=+0.106877567">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.</span></footer></body></html>
+<a href=# class=top>Top</a></div></main><footer><span>&copy; <time datetime="2022-11-27 07:26:07.223122633 +0000 UTC m=+0.104785554">2022</time> Mudream. Made with <a href=https://gohugo.io>Hugo</a> using the <a href=https://github.com/EmielH/tale-hugo/>Tale</a> theme.</span></footer></body></html>
